@@ -1,0 +1,92 @@
+---
+title: "Introduction"
+author:
+  - name: "Samvel B. Gasparyan"
+    url: https://github.com/Samve
+    affiliation: gasparyan.co
+    affiliation_url: https://www.gasparyan.co
+output: rmarkdown::html_vignette
+bibliography: REFERENCES.bib
+vignette: >
+  %\VignetteIndexEntry{Introduction}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Start
+
+Install the package *hce* and check the version
+
+```{r setup}
+library(hce)
+packageVersion("hce")
+
+```
+
+List the functions and the datasets in the package
+
+```{r}
+ls("package:hce")
+```
+
+## Simulation
+
+To simulate values from a hierarchical composite endpoint we use the function *`simHCE()`*, which has the following arguments
+
+```{r}
+args("simHCE")
+```
+
+
+```{r}
+Rates_A <- c(1.72, 1.74, 0.58, 1.5, 1) 
+Rates_P <- c(2.47, 2.24, 2.9, 4, 6) 
+dat1 <- simHCE(n = 2500, TTE_A = Rates_A, TTE_P = Rates_P, 
+               CM_A = -3, CM_P = -6, CSD_A = 16, CSD_P = 15, fixedfy = 3)
+```
+
+```{r}
+class(dat1)
+head(dat1)
+```
+
+As we see, it creates an object of type `hce` which inherits from the built-in class `data.frame`. We can check all implemented methods for this new class as follows:
+```{r}
+methods(class = "hce")
+```
+
+## Create an hce object from a data frame
+
+Consider the dataset `HCE1` which is part of the package `hce`
+
+```{r}
+data(HCE1, package = "hce")
+class(HCE1)
+head(HCE1)
+```
+
+This dataset has the appropriate structure of `hce` objects, but its class is `data.frame.` The constructor function `new_hce()` can be used to construct an `hce` object based on a data frame that has the appropriate structure
+
+```{r}
+dat2 <- new_hce(HCE1)
+class(dat2)
+```
+
+## Win odds
+
+The function `calcWO()` can be used to calculate the win odds for `hce` objects [@gasparyan2021power]
+
+```{r}
+calcWO(dat1)
+calcWO(dat2)
+```
+
+
+
