@@ -19,9 +19,9 @@
 #' @examples
 #' Rates_A <- c(1.72, 1.74, 0.58, 1.5, 1)
 #' Rates_P <- c(2.47, 2.24, 2.9, 4, 6)
-#' dat0 <- simHCE(n = 2500, TTE_A = Rates_A, TTE_P = Rates_P,
+#' dat <- simHCE(n = 2500, TTE_A = Rates_A, TTE_P = Rates_P,
 #' CM_A = -3, CM_P = -6, CSD_A = 16, CSD_P = 15, fixedfy = 3)
-#' str(dat0)
+#' head(dat)
 
 simHCE <- function(n, TTE_A, TTE_P, CM_A, CM_P, CSD_A = 1, CSD_P = 1, fixedfy = 1, yeardays = 360, pat = 100, ord = 10000, seed = NULL ){
   if(base::length(TTE_P) != base::length(TTE_A))

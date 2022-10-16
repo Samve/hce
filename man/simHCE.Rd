@@ -53,9 +53,9 @@ Simulate an HCE with given event rates of time-to-event outcomes, mean and SD of
 \examples{
 Rates_A <- c(1.72, 1.74, 0.58, 1.5, 1)
 Rates_P <- c(2.47, 2.24, 2.9, 4, 6)
-dat0 <- simHCE(n = 2500, TTE_A = Rates_A, TTE_P = Rates_P,
+dat <- simHCE(n = 2500, TTE_A = Rates_A, TTE_P = Rates_P,
 CM_A = -3, CM_P = -6, CSD_A = 16, CSD_P = 15, fixedfy = 3)
-str(dat0)
+head(dat)
 }
 \seealso{
 \code{\link[=hce]{hce()}}, \code{\link[=new_hce]{new_hce()}}, \code{\link[=validate_hce]{validate_hce()}}  for the helper, constructor, and validtaor functions of hce.
