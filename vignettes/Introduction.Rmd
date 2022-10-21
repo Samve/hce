@@ -22,7 +22,7 @@ knitr::opts_chunk$set(
 
 ## Start
 
-Install the package *hce* and check the version
+Install the package `hce` and check the version
 
 ```{r setup}
 library(hce)
@@ -88,5 +88,6 @@ calcWO(dat1)
 calcWO(dat2)
 ```
 
+## References
 
 
