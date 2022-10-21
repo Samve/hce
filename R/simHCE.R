@@ -1,8 +1,8 @@
 #' Simulate an HCE with given event rates of time-to-event outcomes, mean and SD of the continuous outcome by treatment group
 #'
 #' @param n sample size per treatment group
-#' @param TTE_A event rates in the active group for the time-to-event outcomes.
-#' @param TTE_P event rates in the placebo group for the time-to-event outcomes. Should have the same length as TTE_A.
+#' @param TTE_A event rates per year in the active group for the time-to-event outcomes.
+#' @param TTE_P event rates per year in the placebo group for the time-to-event outcomes. Should have the same length as TTE_A.
 #' @param CM_A mean value for the continuous outcome of the active group.
 #' @param CM_P mean value for the continuous outcome of the placebo group.
 #' @param CSD_A standard deviation for the continuous outcome of the active group.
@@ -15,7 +15,7 @@
 #' @return an object of class hce.
 #' @export
 #' @md
-#' @seealso [hce::hce()], [hce::new_hce()], [hce::validate_hce()]  for the helper, constructor, and validtaor functions of hce.
+#' @seealso [hce::hce()], [hce::new_hce()], [hce::validate_hce()]  for the helper, constructor, and validator functions of hce.
 #' @examples
 #' Rates_A <- c(1.72, 1.74, 0.58, 1.5, 1)
 #' Rates_P <- c(2.47, 2.24, 2.9, 4, 6)
