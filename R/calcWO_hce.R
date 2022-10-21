@@ -10,6 +10,8 @@
 #' * WOnull win odds of the null hypothesis (specified in the `WOnull` argument).
 #' * alpha two-sided significance level for calculating the confidence interval (specified in the `alpha` argument).
 #' * Pvalue p-value associated with testing the null hypothesis.
+#' * WP calculated win probability.
+#' * WP_SE standard error of the win probability.
 #' @export
 #' @examples
 #' data(HCE3)

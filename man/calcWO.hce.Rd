@@ -21,6 +21,8 @@ a data frame containing the win odds and its confidence interval. It contains th
 \item WOnull win odds of the null hypothesis (specified in the \code{WOnull} argument).
 \item alpha two-sided significance level for calculating the confidence interval (specified in the \code{alpha} argument).
 \item Pvalue p-value associated with testing the null hypothesis.
+\item WP calculated win probability.
+\item WP_SE standard error of the win probability.
 }
 }
 \description{
