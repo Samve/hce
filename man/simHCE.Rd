@@ -22,9 +22,9 @@ simHCE(
 \arguments{
 \item{n}{sample size per treatment group}
 
-\item{TTE_A}{event rates in the active group for the time-to-event outcomes.}
+\item{TTE_A}{event rates per year in the active group for the time-to-event outcomes.}
 
-\item{TTE_P}{event rates in the placebo group for the time-to-event outcomes. Should have the same length as TTE_A.}
+\item{TTE_P}{event rates per year in the placebo group for the time-to-event outcomes. Should have the same length as TTE_A.}
 
 \item{CM_A}{mean value for the continuous outcome of the active group.}
 
@@ -58,5 +58,5 @@ CM_A = -3, CM_P = -6, CSD_A = 16, CSD_P = 15, fixedfy = 3)
 head(dat)
 }
 \seealso{
-\code{\link[=hce]{hce()}}, \code{\link[=new_hce]{new_hce()}}, \code{\link[=validate_hce]{validate_hce()}}  for the helper, constructor, and validtaor functions of hce.
+\code{\link[=hce]{hce()}}, \code{\link[=new_hce]{new_hce()}}, \code{\link[=validate_hce]{validate_hce()}}  for the helper, constructor, and validator functions of hce.
 }

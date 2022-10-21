@@ -5,7 +5,7 @@
 #' @return a data frame containing calculated values.
 #' @export
 #' @md
-#' @seealso [hce::calcWO.formula()], [hce::calcWO.hce()]  methods.
+#' @seealso [hce::calcWO.formula()], [hce::calcWO.hce()], [hce::calcWO.data.frame()]  methods.
 #'
 calcWO <- function(x, ...) {
   UseMethod("calcWO")
