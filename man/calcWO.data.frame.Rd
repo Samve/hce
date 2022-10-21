@@ -43,5 +43,5 @@ data(HCE4)
 calcWO(x = HCE4, AVAL = "AVAL", TRTP = "TRTP", ref = "P")
 }
 \references{
-Gasparyan, Samvel B., et al. "Adjusted win ratio with stratification: calculation methods and interpretation." Statistical Methods in Medical Research 30.2 (2021): 580-611.
+Gasparyan, Samvel B., et al. "Adjusted win ratio with stratification: calculation methods and interpretation." Statistical Methods in Medical Research 30.2 (2021): 580-611. \url{doi:10.1177/0962280220942558}
 }
