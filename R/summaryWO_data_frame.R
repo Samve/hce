@@ -20,6 +20,7 @@ summaryWO.data.frame <- function(x, AVAL, TRTP, ref, GROUP = NULL, ...){
   data <- as.data.frame(x)
   data$AVAL <- data[, base::names(data) == AVAL]
   data$TRTP <- data[, base::names(data) == TRTP]
+  data$GROUP <- data[, base::names(data) == GROUP]
   
   if (length(unique(data$TRTP)) != 2) 
     stop("The dataset should contain two treatment groups")
