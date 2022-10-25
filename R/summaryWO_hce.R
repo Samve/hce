@@ -20,5 +20,5 @@ summaryWO.hce <- function(x, ...){
   else ref <- "P"
   if(! ref %in% c("A", "P")) stop("Choose the reference from the values A or P.")
   
-  summaryWO.data.frame(x = x, AVAL = "AVAL", TRTP = "TRTP", ref = ref)
+  summaryWO.data.frame(x = x, AVAL = "AVAL", TRTP = "TRTP", ref = ref, GROUP = "GROUP")
 }
