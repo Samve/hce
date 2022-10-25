@@ -18,7 +18,7 @@
 #' Rates_P <- c(2, 2) 
 #' dat <- simHCE(n = 500, TTE_A = Rates_A, TTE_P = Rates_P, CM_A = 1.25, CM_P = 1)
 #' calcWO(dat)
-#'
+#' calcWO(dat, ref = "A")
 calcWO.hce <- function(x, ...){
   Args <- base::list(...)
   x <- base::as.data.frame(x)

@@ -50,12 +50,14 @@ simHCE <- function(n, TTE_A, TTE_P, CM_A, CM_P, CSD_A = 1, CSD_P = 1, fixedfy = 
 
 
   M_P <- base::sapply(TTE_P, stats::rexp, n = n)
+  M_P <- round(M_P)
   M_P <- base::as.data.frame(M_P)
   base::names(M_P) <- base::paste0("TTE", 1:l)
   M_P$TRTP <- "P"
   M_P$ID <- (n + 1):(2*n)
 
   M_A <- base::sapply(TTE_A, stats::rexp, n = n)
+  M_A <- round(M_A)
   M_A <- base::as.data.frame(M_A)
   base::names(M_A) <- base::paste0("TTE", 1:l)
   M_A$TRTP <- "A"
@@ -75,14 +77,14 @@ simHCE <- function(n, TTE_A, TTE_P, CM_A, CM_P, CSD_A = 1, CSD_P = 1, fixedfy = 
   lencont_A <- dat$GROUP=="C" & dat$TRTP=="A"
   lencont_P <- dat$GROUP=="C" & dat$TRTP=="P"
 
-  dat[lencont_A, "AVAL0"] <- stats::rnorm(base::sum(lencont_A), mean = CM_A, sd = CSD_A)
-  dat[lencont_P, "AVAL0"] <- stats::rnorm(base::sum(lencont_P), mean = CM_P, sd = CSD_P)
+  dat[lencont_A, "AVAL0"] <- round(stats::rnorm(base::sum(lencont_A), mean = CM_A, sd = CSD_A), 2)
+  dat[lencont_P, "AVAL0"] <- round(stats::rnorm(base::sum(lencont_P), mean = CM_P, sd = CSD_P), 2)
   dat[base::is.na(dat$AVAL0), "AVAL0"] <- dat[base::is.na(dat$AVAL0), "AVALT"]
   dat$AVAL <- dat$AVAL0 + dat$GROUPN
   dat$ord <- ord
   dat <- dat[ , c("ID", "TRTP", "GROUP", "GROUPN", "AVALT", "AVAL0", "AVAL", "TTEfixed", "ord", "seed")]
 
-  base::class(dat) <- c("hce", "data.frame")
+  dat <- new_hce(dat)
   return(dat)
 
 }

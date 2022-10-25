@@ -2,7 +2,7 @@
 #' Win odds calculation using a data frame
 #'
 #' @param x a data frame containing subject-level data.
-#' @param AVAL variable in the data with ordinal analysis values
+#' @param AVAL variable in the data with ordinal analysis values.
 #' @param TRTP the treatment variable in the data.
 #' @param ref the reference treatment group.
 #' @param alpha significance level. The default is 0.05.
