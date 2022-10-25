@@ -9,7 +9,7 @@
 \arguments{
 \item{x}{a data frame containing subject-level data.}
 
-\item{AVAL}{variable in the data with ordinal analysis values}
+\item{AVAL}{variable in the data with ordinal analysis values.}
 
 \item{TRTP}{the treatment variable in the data.}
 
