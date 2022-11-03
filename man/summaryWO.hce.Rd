@@ -2,12 +2,12 @@
 % Please edit documentation in R/summaryWO_hce.R
 \name{summaryWO.hce}
 \alias{summaryWO.hce}
-\title{Win odds summary for an hce object}
+\title{Win odds summary for \code{hce} objects}
 \usage{
 \method{summaryWO}{hce}(x, ...)
 }
 \arguments{
-\item{x}{an hce object.}
+\item{x}{an \code{hce} object.}
 
 \item{...}{additional parameters.}
 }
@@ -20,7 +20,7 @@ a list containing the summary of wins, losses, and ties. It contains the followi
 }
 }
 \description{
-Win odds summary for an hce object
+Win odds summary for \code{hce} objects
 }
 \examples{
 dat <- new_hce(HCE4)

@@ -1,6 +1,6 @@
-#' Win odds calculation for an hce object
+#' Win odds calculation for `hce` objects
 #'
-#' @param x an hce object.
+#' @param x an `hce` object.
 #' @param ... additional parameters.
 #' @returns a data frame containing the win odds and its confidence interval. It contains the following columns:
 #' * WO calculated win odds.

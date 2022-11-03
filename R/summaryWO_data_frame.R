@@ -48,8 +48,8 @@ summaryWO.data.frame <- function(x, AVAL, TRTP, ref, GROUP = NULL, ...){
   DATA[, c("IWN", "ITN", "ILN")] <- rbind(d[d$TRTP == "A", c("IWN", "ITN", "ILN")], d[d$TRTP == "P", c("IWN", "ITN", "ILN")])
   DATA$IWP <- base::ifelse(d$TRTP == "A", d$IWTN/n0, d$IWTN/n1)
   
-  
-  res <- stats::aggregate(x = DATA, by = cbind(IWN, ILN, ITN) ~ TRTP, FUN = "sum")
+  res <- stats::aggregate(x = DATA[, c("IWN", "ILN", "ITN")], 
+                          by = list (TRTP = DATA$TRTP),  FUN = "sum")
   names(res) <- c("TRTP", "WIN", "LOSS", "TIE")
   res$TOTAL <- res$WIN + res$LOSS + res$TIE
   res$WR <- res$WIN / res$LOSS
@@ -66,7 +66,8 @@ summaryWO.data.frame <- function(x, AVAL, TRTP, ref, GROUP = NULL, ...){
   
   
   if(!is.null(GROUP)){
-    res0 <- stats::aggregate(x = DATA, by = cbind(IWN, ILN, ITN) ~ TRTP + GROUP, FUN = "sum")
+    res0 <- stats::aggregate(x = DATA[, c("IWN", "ILN", "ITN")], 
+                             by = list (TRTP = DATA$TRTP, GROUP = DATA$GROUP),  FUN = "sum")
     names(res0) <- c("TRTP", "GROUP", "WIN", "LOSS", "TIE")
     res0$TOTAL <- res0$WIN + res0$LOSS + res0$TIE
     l <- list(summary = res, summary_by_GROUP = res0, WO = out)
