@@ -2,12 +2,12 @@
 % Please edit documentation in R/calcWO_hce.R
 \name{calcWO.hce}
 \alias{calcWO.hce}
-\title{Win odds calculation for an hce object}
+\title{Win odds calculation for \code{hce} objects}
 \usage{
 \method{calcWO}{hce}(x, ...)
 }
 \arguments{
-\item{x}{an hce object.}
+\item{x}{an \code{hce} object.}
 
 \item{...}{additional parameters.}
 }
@@ -26,7 +26,7 @@ a data frame containing the win odds and its confidence interval. It contains th
 }
 }
 \description{
-Win odds calculation for an hce object
+Win odds calculation for \code{hce} objects
 }
 \examples{
 Rates_A <- c(1, 1.5) 
