@@ -1,6 +1,6 @@
-#' Win odds summary for an hce object
+#' Win odds summary for `hce` objects
 #'
-#' @param x an hce object.
+#' @param x an `hce` object.
 #' @param ... additional parameters.
 #' @returns a list containing the summary of wins, losses, and ties. It contains the following named objects:
 #' * summary a data frame containing number of wins, losses, and ties by treatment group and the overall number of comparisons.
