@@ -31,7 +31,11 @@ a data frame containing the win odds and its confidence interval. It contains th
 Win odds calculation using formula syntax
 }
 \examples{
+#Example 1
 data(HCE1)
 calcWO(AVAL ~ TRTP, data = HCE1)
+
+#Example 2
+calcWO(data = iris[iris$Species != "setosa",], Sepal.Width ~ Species)
 
 }
