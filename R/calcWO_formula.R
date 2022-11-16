@@ -15,8 +15,12 @@
 #' * WP_SE standard error of the win probability.
 #' @export
 #' @examples
+#' #Example 1
 #' data(HCE1)
 #' calcWO(AVAL ~ TRTP, data = HCE1)
+#'
+#'#Example 2
+#' calcWO(data = iris[iris$Species != "setosa",], Sepal.Width ~ Species)
 #'
 calcWO.formula <- function(x, data, ...){
   Args <- base::list(...)

@@ -1,6 +1,6 @@
-#' Win odds calculation for an hce object
+#' Win odds calculation for `hce` objects
 #'
-#' @param x an hce object.
+#' @param x an `hce` object.
 #' @param ... additional parameters.
 #' @returns a data frame containing the win odds and its confidence interval. It contains the following columns:
 #' * WO calculated win odds.
@@ -24,8 +24,9 @@ calcWO.hce <- function(x, ...){
   x <- base::as.data.frame(x)
 
   if(!is.null(Args[["ref"]])) ref <- Args[["ref"]]
-  else ref <- "P"
-  if(! ref %in% c("A", "P")) stop("Choose the reference from the values A or P.")
+  else if ("P" %in% unique(x$TRTP)) ref <- "P"
+  else ref <- unique(x$TRTP)[1]
+  
 
   calcWO.data.frame(x = x, AVAL = "AVAL", TRTP = "TRTP", ref = ref)
 }

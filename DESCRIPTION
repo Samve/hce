@@ -1,7 +1,7 @@
 Type: Package
 Package: hce
 Title: Design and Analysis of Hierarchical Composite Endpoints
-Version: 0.0.6
+Version: 0.0.8
 Authors@R: 
     person("Samvel B.", "Gasparyan", , "gasparyan.co@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-4797-2208"))

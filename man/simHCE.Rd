@@ -2,10 +2,11 @@
 % Please edit documentation in R/simHCE.R
 \name{simHCE}
 \alias{simHCE}
-\title{Simulate an HCE with given event rates of time-to-event outcomes, mean and SD of the continuous outcome by treatment group}
+\title{Simulate \code{hce} object with given event rates of time-to-event outcomes, mean and SD of the continuous outcome by treatment group}
 \usage{
 simHCE(
   n,
+  n0 = n,
   TTE_A,
   TTE_P,
   CM_A,
@@ -20,7 +21,9 @@ simHCE(
 )
 }
 \arguments{
-\item{n}{sample size per treatment group}
+\item{n}{sample size in the active treatment group.}
+
+\item{n0}{sample size in the placebo group.}
 
 \item{TTE_A}{event rates per year in the active group for the time-to-event outcomes.}
 
@@ -48,14 +51,21 @@ simHCE(
 an object of class hce.
 }
 \description{
-Simulate an HCE with given event rates of time-to-event outcomes, mean and SD of the continuous outcome by treatment group
+Simulate \code{hce} object with given event rates of time-to-event outcomes, mean and SD of the continuous outcome by treatment group
 }
 \examples{
+# Example 1
 Rates_A <- c(1.72, 1.74, 0.58, 1.5, 1)
 Rates_P <- c(2.47, 2.24, 2.9, 4, 6)
 dat <- simHCE(n = 2500, TTE_A = Rates_A, TTE_P = Rates_P,
 CM_A = -3, CM_P = -6, CSD_A = 16, CSD_P = 15, fixedfy = 3)
 head(dat)
+
+# Example 2
+Rates_A <- c(5, 7)
+Rates_P <- c(7, 10)
+dat <- simHCE(n = 1000, n0 = 500, TTE_A = Rates_A, TTE_P = Rates_P, CM_A = 2, CM_P = 0)
+summaryWO(dat)
 }
 \seealso{
 \code{\link[=hce]{hce()}}, \code{\link[=new_hce]{new_hce()}}, \code{\link[=validate_hce]{validate_hce()}}  for the helper, constructor, and validator functions of hce.
