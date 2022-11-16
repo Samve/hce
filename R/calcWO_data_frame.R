@@ -34,10 +34,11 @@ calcWO.data.frame <- function(x, AVAL, TRTP, ref, alpha = 0.05, WOnull = 1, ...)
 
   data$AVAL <- data[, base::names(data) == AVAL]
   data$TRTP <- data[, base::names(data) == TRTP]
-  if(length(unique(data$TRTP)) != 2) stop("The dataset should contain two treatment groups")
+  if(length(unique(data$TRTP)) != 2) stop("The dataset should contain two treatment groups.")
+  if(!ref %in% unique(data$TRTP)) stop("Choose the reference from the values in TRTP.")
   data$TRTP <- base::ifelse(data$TRTP == ref, "P", "A")
 
-  A <- base::rank(c(data$AVAL[data$TRTP == "A"], data$AVAL[data$TRTP=="P"]), ties.method = "average")
+  A <- base::rank(c(data$AVAL[data$TRTP == "A"], data$AVAL[data$TRTP == "P"]), ties.method = "average")
   B <- base::tapply(data$AVAL, data$TRTP, base::rank, ties.method = "average")
   n <- base::tapply(data$AVAL, data$TRTP, base::length)
   n1 <- n[["A"]]

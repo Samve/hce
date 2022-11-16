@@ -28,9 +28,6 @@ hce <- function(GROUP = character(), TRTP = character(), AVAL0 = 0, ORD = sort(u
   ORD <- ORD[ORD %in% GROUP]
   EVENT <- ordered(GROUP, levels = ORD) 
   
-  if(length(unique(EVENT)) < 2)
-    stop("GROUP should have at least two distinct values")
-  
   EVENTN <- as.numeric(EVENT) - 1
   ord <- max(abs(AVAL0))
   SEQ <- c(0, 1, 10, 100, 1000, 1000, 10000, 10^5, 10^6, 10^7, 10^8, 10^9, 10^10)
