@@ -25,13 +25,21 @@ a data frame containing the win odds and its confidence interval. It contains th
 \item Pvalue p-value associated with testing the null hypothesis.
 \item WP calculated win probability.
 \item WP_SE standard error of the win probability.
+\item WP_SD standard deviation of the win probability, calculated as \code{WP_SE} multiplied by \code{sqrt(N)}.
+\item N total number of patients in the analysis.
+\item formula returning the specified formula in the \code{x} argument.
+\item ref showing how the reference group was selected. Can be modifying by specifying the \code{ref} argument.
 }
 }
 \description{
 Win odds calculation using formula syntax
 }
 \examples{
+#Example 1
 data(HCE1)
 calcWO(AVAL ~ TRTP, data = HCE1)
+
+#Example 2
+calcWO(data = COVID19, GROUP ~ TRTP)
 
 }

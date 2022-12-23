@@ -12,6 +12,8 @@
 #' * Pvalue p-value associated with testing the null hypothesis.
 #' * WP calculated win probability.
 #' * WP_SE standard error of the win probability.
+#' * WP_SD standard deviation of the win probability, calculated as `WP_SE` multiplied by `sqrt(N)`.
+#' * N total number of patients in the analysis.
 #' @export
 #' @examples
 #' Rates_A <- c(1, 1.5) 
@@ -24,8 +26,9 @@ calcWO.hce <- function(x, ...){
   x <- base::as.data.frame(x)
 
   if(!is.null(Args[["ref"]])) ref <- Args[["ref"]]
-  else ref <- "P"
-  if(! ref %in% c("A", "P")) stop("Choose the reference from the values A or P.")
+  else if ("P" %in% unique(x$TRTP)) ref <- "P"
+  else ref <- unique(x$TRTP)[1]
+  
 
   calcWO.data.frame(x = x, AVAL = "AVAL", TRTP = "TRTP", ref = ref)
 }
