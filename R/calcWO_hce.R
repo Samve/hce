@@ -12,6 +12,8 @@
 #' * Pvalue p-value associated with testing the null hypothesis.
 #' * WP calculated win probability.
 #' * WP_SE standard error of the win probability.
+#' * WP_SD standard deviation of the win probability, calculated as `WP_SE` multiplied by `sqrt(N)`.
+#' * N total number of patients in the analysis.
 #' @export
 #' @examples
 #' Rates_A <- c(1, 1.5) 

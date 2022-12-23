@@ -23,6 +23,8 @@ a data frame containing the win odds and its confidence interval. It contains th
 \item Pvalue p-value associated with testing the null hypothesis.
 \item WP calculated win probability.
 \item WP_SE standard error of the win probability.
+\item WP_SD standard deviation of the win probability, calculated as \code{WP_SE} multiplied by \code{sqrt(N)}.
+\item N total number of patients in the analysis.
 }
 }
 \description{

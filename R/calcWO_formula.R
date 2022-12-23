@@ -13,6 +13,10 @@
 #' * Pvalue p-value associated with testing the null hypothesis.
 #' * WP calculated win probability.
 #' * WP_SE standard error of the win probability.
+#' * WP_SD standard deviation of the win probability, calculated as `WP_SE` multiplied by `sqrt(N)`.
+#' * N total number of patients in the analysis.
+#' * formula returning the specified formula in the `x` argument.
+#' * ref showing how the reference group was selected. Can be modifying by specifying the `ref` argument.
 #' @export
 #' @examples
 #' #Example 1
@@ -20,7 +24,7 @@
 #' calcWO(AVAL ~ TRTP, data = HCE1)
 #'
 #'#Example 2
-#' calcWO(data = iris[iris$Species != "setosa",], Sepal.Width ~ Species)
+#' calcWO(data = COVID19, GROUP ~ TRTP)
 #'
 calcWO.formula <- function(x, data, ...){
   Args <- base::list(...)
