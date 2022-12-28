@@ -1,7 +1,6 @@
-#' Win statistics calculation using formula syntax
+#' Win statistics calculation for `hce` objects
 #'
-#' @param x an object of class formula.
-#' @param data a data frame.
+#' @param x an `hce` object.
 #' @param ... additional parameters.
 #'
 #' @returns a list containing win statistics and their confidence intervals. It contains the following named data frames: 
@@ -15,7 +14,7 @@
 #' * SE a data frame containing standard errors used to calculed the Confidence intervals for win statistics. 
 #' @export
 #' @md
-#' @seealso [hce::calcWINS()], [hce::calcWINS.hce()], [hce::calcWINS.data.frame()].
+#' @seealso [hce::calcWINS()], [hce::calcWINS.formula()], [hce::calcWINS.data.frame()].
 #' @references
 #' The theory of win statistics is covered in the following papers. 
 #' * For the win proportion CI calculation see 
@@ -32,36 +31,27 @@
 #' \cr \cr Goodman, L. A., & Kruskal, W. H. (1963) Measures of association for cross classifications III: Approximate sampling theory. Journal of the American Statistical Association, 58, 310-364.
 #' @examples
 #' # Example 1
-#' calcWINS(x = GROUP ~ TRTP, data = COVID19b)
+#' COVID19HCE <- hce(GROUP = COVID19$GROUP, TRTP = COVID19$TRTP)
+#' calcWINS(COVID19HCE)
 #' # Example 2
-#' calcWINS(x = GROUP ~ TRTP, data = COVID19, ref = "P", alpha = 0.01, WOnull = 1.2)
-calcWINS.formula <- function(x, data, ...){
+#' COVID19bHCE <- hce(GROUP = COVID19b$GROUP, TRTP = COVID19b$TRTP)
+#' calcWINS(COVID19bHCE, ref = "A", WOnull = 1.1, alpha = 0.01)
+calcWINS.hce <- function(x, ...){
   Args <- base::list(...)
-  formulavars <- base::all.vars(x)
-  formula0 <- stats::reformulate(formulavars[2], response = formulavars[1])
-  mf <- stats::model.frame(formula = formula0, data = data)
-  Level <- base::unique(mf[[formulavars[2]]])
-  Levellength <- base::length(Level)
+  x <- new_hce(x)
+  x <- base::as.data.frame(x)
   
-  if(Levellength != 2){
-    message1 <- base::paste("The variable", formulavars[2], "should have exactly 2 unique values, but has", Levellength)
-    stop(message1)
-  }
-  if(!base::is.null(Args[["ref"]])) ref <- Args[["ref"]]
-  else if (base::all(Level == c("A", "P"))) ref <- "P"
-  else ref <- Level[1]
-  if(! ref %in% Level) stop(base::paste("Choose the reference from the values",
-                                        base::paste(Level, collapse = ", ")))
-  
+  if(!is.null(Args[["ref"]])) ref <- Args[["ref"]]
+  else if ("P" %in% unique(x$TRTP)) ref <- "P"
+  else ref <- unique(x$TRTP)[1]
   if(!base::is.null(Args[["alpha"]])) alpha <- Args[["alpha"]]
   else alpha <- 0.05
   if(!base::is.null(Args[["WOnull"]])) WOnull <- Args[["WOnull"]]
   else WOnull <- 1
   
-  res <- calcWINS.data.frame(x = mf, AVAL = formulavars[1], TRTP = formulavars[2], 
+  res <- calcWINS.data.frame(x = x, AVAL = "AVAL", TRTP = "TRTP", 
                              ref = ref, alpha = alpha, WOnull = WOnull)
-  res$formula <- base::deparse(formula0)
-  res$ref <- base::paste(Level[Level != ref],"vs", ref)
+  res$ref <- base::paste(unique(x$TRTP)[unique(x$TRTP) != ref],"vs", ref)
   res$Input <- data.frame(alpha = alpha, WOnull = WOnull)
   res
 }

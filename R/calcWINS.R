@@ -5,7 +5,8 @@
 #'
 #' @return a data frame containing calculated values.
 #' @export
-#'
+#' @md
+#' @seealso [hce::calcWINS.formula()], [hce::calcWINS.data.frame()]  methods.
 calcWINS <- function(x, ...) {
   UseMethod("calcWINS")
 }

@@ -2,6 +2,7 @@
 
 S3method(calcWINS,data.frame)
 S3method(calcWINS,formula)
+S3method(calcWINS,hce)
 S3method(calcWO,data.frame)
 S3method(calcWO,formula)
 S3method(calcWO,hce)
