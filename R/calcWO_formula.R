@@ -44,7 +44,13 @@ calcWO.formula <- function(x, data, ...){
   if(! ref %in% Level) stop(base::paste("Choose the reference from the values",
                                   base::paste(Level, collapse = ", ")))
 
-  res <- calcWO.data.frame(x = mf, AVAL = formulavars[1], TRTP = formulavars[2], ref = ref)
+  if(!base::is.null(Args[["alpha"]])) alpha <- Args[["alpha"]]
+  else alpha <- 0.05
+  if(!base::is.null(Args[["WOnull"]])) WOnull <- Args[["WOnull"]]
+  else WOnull <- 1
+  
+  res <- calcWO.data.frame(x = mf, AVAL = formulavars[1], TRTP = formulavars[2], 
+                           ref = ref, alpha = alpha, WOnull = WOnull)
   res$formula <- base::deparse(formula0)
   res$ref <- base::paste(Level[Level != ref],"vs", ref)
   res
