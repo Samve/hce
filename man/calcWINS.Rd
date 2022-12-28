@@ -17,3 +17,6 @@ a data frame containing calculated values.
 \description{
 A generic function for calculating win statistics
 }
+\seealso{
+\code{\link[=calcWINS.formula]{calcWINS.formula()}}, \code{\link[=calcWINS.data.frame]{calcWINS.data.frame()}}  methods.
+}

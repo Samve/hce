@@ -12,13 +12,13 @@ a data frame with 844 rows and 2 variables:
 }
 }
 \source{
-\url{https://doi.org/10.1056/NEJMoa2007764}
+\url{doi:10.1056/NEJMoa2007764}
 }
 \usage{
 COVID19b
 }
 \description{
-A dataset containing dataset with COVID-19 ordinal scale outcomes for 1062 patients.
+A dataset containing dataset with COVID-19 ordinal scale outcomes for 844 patients.
 }
 \examples{
 #Frequencies

@@ -19,7 +19,7 @@
 #' * SE a data frame containing standard errors used to calculed the Confidence intervals for win statistics. 
 #' @export
 #' @md
-#' @seealso [hce::calcWINS()].
+#' @seealso [hce::calcWINS()], [hce::calcWINS.hce()], [hce::calcWINS.formula()].
 #' @references
 #' The theory of win statistics is covered in the following papers. 
 #' * For the win proportion CI calculation see 

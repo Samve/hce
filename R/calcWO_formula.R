@@ -18,6 +18,8 @@
 #' * formula returning the specified formula in the `x` argument.
 #' * ref showing how the reference group was selected. Can be modifying by specifying the `ref` argument.
 #' @export
+#' @md
+#' @seealso [hce::calcWO()], [hce::calcWO.hce()], [hce::calcWO.data.frame()].
 #' @examples
 #' #Example 1
 #' data(HCE1)

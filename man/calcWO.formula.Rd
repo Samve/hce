@@ -43,3 +43,6 @@ calcWO(AVAL ~ TRTP, data = HCE1)
 calcWO(data = COVID19, GROUP ~ TRTP)
 
 }
+\seealso{
+\code{\link[=calcWO]{calcWO()}}, \code{\link[=calcWO.hce]{calcWO.hce()}}, \code{\link[=calcWO.data.frame]{calcWO.data.frame()}}.
+}

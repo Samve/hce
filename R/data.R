@@ -73,7 +73,7 @@
 #'   \item{GROUP}{type of the event, ordinal outcomes 1-8, where a higher value means a better outcome}
 #'   \item{TRTP}{treatment values, A Active or P Placebo, character}
 #' }
-#' @source <https://doi.org/10.1056/NEJMoa2007764>
+#' @source <doi:10.1056/NEJMoa2007764>
 #' @examples
 #' #Frequencies
 #' table(COVID19)
@@ -88,14 +88,14 @@
 
 #' COVID-19 ordinal scale dataset (preliminary report).
 #'
-#' A dataset containing dataset with COVID-19 ordinal scale outcomes for 1062 patients.
+#' A dataset containing dataset with COVID-19 ordinal scale outcomes for 844 patients.
 #'
 #' @format a data frame with 844 rows and 2 variables:
 #' \describe{
 #'   \item{GROUP}{type of the event, ordinal outcomes 1-8, where a higher value means a better outcome}
 #'   \item{TRTP}{treatment values, A Active or P Placebo, character}
 #' }
-#' @source <https://doi.org/10.1056/NEJMoa2007764>
+#' @source <doi:10.1056/NEJMoa2007764>
 #' @examples
 #' #Frequencies
 #' table(COVID19b)

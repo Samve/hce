@@ -35,5 +35,8 @@ Rates_A <- c(1, 1.5)
 Rates_P <- c(2, 2) 
 dat <- simHCE(n = 500, TTE_A = Rates_A, TTE_P = Rates_P, CM_A = 1.25, CM_P = 1)
 calcWO(dat)
-calcWO(dat, ref = "A")
+calcWO(dat, ref = "A", WOnull = 1, alpha = 0.01)
+}
+\seealso{
+\code{\link[=calcWO]{calcWO()}}, \code{\link[=calcWO.formula]{calcWO.formula()}}, \code{\link[=calcWO.data.frame]{calcWO.data.frame()}}.
 }

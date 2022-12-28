@@ -58,5 +58,5 @@ The theory of win statistics is covered in the following papers.
 }
 }
 \seealso{
-\code{\link[=calcWINS]{calcWINS()}}.
+\code{\link[=calcWINS]{calcWINS()}}, \code{\link[=calcWINS.hce]{calcWINS.hce()}}, \code{\link[=calcWINS.formula]{calcWINS.formula()}}.
 }
