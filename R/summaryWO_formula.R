@@ -12,6 +12,8 @@
 #'
 #' @examples
 #' summaryWO(data = COVID19, GROUP ~ TRTP)
+#' summaryWO(data = COVID19, GROUP ~ TRTP, GROUP = "GROUP", ref = "P")
+
 summaryWO.formula <- function(x, data, ...){
   Args <- base::list(...)
   formulavars <- base::all.vars(x)
@@ -29,8 +31,9 @@ summaryWO.formula <- function(x, data, ...){
   else ref <- Level[1]
   if(! ref %in% Level) stop(base::paste("Choose the reference from the values",
                                         base::paste(Level, collapse = ", ")))
-  
-  res <- summaryWO.data.frame(x = mf, AVAL = formulavars[1], TRTP = formulavars[2], ref = ref)
+  if(!base::is.null(Args[["GROUP"]])) GROUP <- Args[["GROUP"]]
+  else GROUP <- NULL
+  res <- summaryWO.data.frame(x = mf, AVAL = formulavars[1], TRTP = formulavars[2], ref = ref, GROUP = GROUP)
   res$formula <- base::deparse(formula0)
   res$ref <- base::paste(Level[Level != ref],"vs", ref)
   res
