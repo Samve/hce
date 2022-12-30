@@ -28,7 +28,7 @@ Power calculation for the win odds test (no ties)
 powerWO(N = 1000, WO = 1.2)
 powerWO(N = seq(500, 1500, 100), WO = 1.2)
 # Example 2 - Use data-driven win odds and standard deviation from the COVID19 dataset
-res <- calcWO(x = COVID19, AVAL = "GROUP", TRTP = "TRTP", ref = "P")
+res <- calcWO(x = COVID19, AVAL = "GROUP", TRTP = "TRTP", ref = "Placebo")
 print(res)
 powerWO(N = 500, WO = res$WO, SD = res$SD_WP)
 powerWO(N = 500, WO = res$WO) # power with the default standard deviation for the win proportion.
