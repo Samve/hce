@@ -8,7 +8,7 @@
 #' @param alpha significance level. The default is 0.05.
 #' @param WOnull the null hypothesis. The default is 1.
 #' @param ... additional parameters.
-#' @returns a data frame containing the win odds and its confidence interval. It contains the following columns:
+#' @returns a data frame containing the win odds and its confidence interval. The data frame has an attribute called "covar_info" giving summary statistics for the covariate used for the calculations. The data frame itselfs contains the following columns:
 #' * WO_beta adjusted win odds.
 #' * LCL lower confidence limit for adjusted WO.
 #' * UCL upper confidence limit for adjusted WO.
@@ -27,10 +27,13 @@
 #' @references Gasparyan, Samvel B., et al. "Adjusted win ratio with stratification: calculation methods and interpretation." Statistical Methods in Medical Research 30.2 (2021): 580-611. <doi:10.1177/0962280220942558>
 #' @examples
 #' # An baseline covariate that is highly correlated with the outcome
+#' set.seed(2023)
 #' dat <- COVID19
 #' n <- nrow(dat)
 #' dat$Severity <- ifelse(dat$GROUP > 4, rexp(n, 1), rexp(n, 10))
-#' regWO(x = dat, AVAL = "GROUP", TRTP = "TRTP", COVAR = "Severity", ref = "Placebo")
+#' res <- regWO(x = dat, AVAL = "GROUP", TRTP = "TRTP", COVAR = "Severity", ref = "Placebo")
+#' res
+#' attr(res, "covar_info")
 regWO.data.frame <- function(x, AVAL, TRTP, COVAR, ref, alpha = 0.05, WOnull = 1, ...){
   data <- as.data.frame(x)
   alpha <- alpha[1]
@@ -67,7 +70,7 @@ regWO.data.frame <- function(x, AVAL, TRTP, COVAR, ref, alpha = 0.05, WOnull = 1
   MEAN_COVAR <- base::tapply(d$COVAR, d$TRTP, base::mean)
   VAR_COVAR <- base::tapply(d$COVAR, d$TRTP, function(x) (base::length(x)-1)*stats::var(x)/base::length(x))
   C0 <- sapply(split(d[, c("COVAR", "R0")], d$TRTP), 
-               function(d) (length(d$COVAR) - 1)*cov(d$COVAR, d$R0)/length(d$COVAR))
+               function(d) (length(d$COVAR) - 1)*stats::cov(d$COVAR, d$R0)/length(d$COVAR))
   C1 <- sum(C0/c(n1, n0))
   
   beta <- WP - C1*(MEAN_COVAR["A"] - MEAN_COVAR["P"])/sum(VAR_COVAR/c(n1, n0))
@@ -76,7 +79,7 @@ regWO.data.frame <- function(x, AVAL, TRTP, COVAR, ref, alpha = 0.05, WOnull = 1
   
   WO_beta <- beta/(1 - beta)
   SE <- SE_beta/(beta*(1 - beta))
-  LCL <- WO_beta*base::exp(-Ca*SE)
+  LCL <- WO_beta*base::exp(- Ca*SE)
   UCL <- WO_beta*base::exp(Ca*SE)
   threshold <- base::abs(beta - WPnull)/SE_beta
   P <- 2*(1 - stats::pnorm(threshold))
@@ -86,6 +89,9 @@ regWO.data.frame <- function(x, AVAL, TRTP, COVAR, ref, alpha = 0.05, WOnull = 1
                           alpha = alpha, Pvalue = P, 
                           beta = beta, SE_beta = SE_beta, 
                           WP = WP, SE_WP = SE_WP, WO = WP/(1 - WP))
+  
+  covar_info <- data.frame(MEAN_DIFF = MEAN_COVAR["A"] - MEAN_COVAR["P"], VAR_SUM = sum(VAR_COVAR/c(n1, n0)), COV_SUM = C1)
+  attr(out, "covar_info") <- covar_info
   
   return(out)
 }
