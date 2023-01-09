@@ -24,7 +24,7 @@
 \item{...}{additional parameters.}
 }
 \value{
-a data frame containing the win odds and its confidence interval. It contains the following columns:
+a data frame containing the win odds and its confidence interval. The data frame has an attribute called "covar_info" giving summary statistics for the covariate used for the calculations. The data frame itselfs contains the following columns:
 \itemize{
 \item WO_beta adjusted win odds.
 \item LCL lower confidence limit for adjusted WO.
@@ -45,10 +45,13 @@ Win odds regression using a data frame
 }
 \examples{
 # An baseline covariate that is highly correlated with the outcome
+set.seed(2023)
 dat <- COVID19
 n <- nrow(dat)
 dat$Severity <- ifelse(dat$GROUP > 4, rexp(n, 1), rexp(n, 10))
-regWO(x = dat, AVAL = "GROUP", TRTP = "TRTP", COVAR = "Severity", ref = "P")
+res <- regWO(x = dat, AVAL = "GROUP", TRTP = "TRTP", COVAR = "Severity", ref = "Placebo")
+res
+attr(res, "covar_info")
 }
 \references{
 Gasparyan, Samvel B., et al. "Adjusted win ratio with stratification: calculation methods and interpretation." Statistical Methods in Medical Research 30.2 (2021): 580-611. \url{doi:10.1177/0962280220942558}
