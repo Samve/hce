@@ -1,6 +1,6 @@
 ---
 title: "Wins"
-date: "`r format(as.Date('2023-02-01'), '%d %B, %Y')`"
+date: "`r format(as.Date('2023-01-20'), '%d %B, %Y')`"
 author:
   - name: "Samvel B. Gasparyan"
     affiliation: https://gasparyan.co/
