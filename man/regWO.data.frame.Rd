@@ -44,7 +44,7 @@ a data frame containing the win odds and its confidence interval. The data frame
 Win odds regression using a data frame
 }
 \examples{
-# An baseline covariate that is highly correlated with the outcome
+# A baseline covariate that is highly correlated with the outcome
 set.seed(2023)
 dat <- COVID19
 n <- nrow(dat)

@@ -26,7 +26,7 @@
 #' @seealso [hce::regWO()].
 #' @references Gasparyan, Samvel B., et al. "Adjusted win ratio with stratification: calculation methods and interpretation." Statistical Methods in Medical Research 30.2 (2021): 580-611. <doi:10.1177/0962280220942558>
 #' @examples
-#' # An baseline covariate that is highly correlated with the outcome
+#' # A baseline covariate that is highly correlated with the outcome
 #' set.seed(2023)
 #' dat <- COVID19
 #' n <- nrow(dat)
