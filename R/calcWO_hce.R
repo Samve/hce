@@ -25,7 +25,7 @@
 #' calcWO(dat, ref = "A", WOnull = 1, alpha = 0.01)
 calcWO.hce <- function(x, ...){
   Args <- base::list(...)
-  x <- new_hce(x)
+  x <- as_hce(x)
   x <- base::as.data.frame(x)
 
   if(!is.null(Args[["ref"]])) ref <- Args[["ref"]]

@@ -18,7 +18,7 @@ Beigel et al. (2020) \url{doi:10.1056/NEJMoa2007764}.
 COVID19
 }
 \description{
-A dataset containing dataset with COVID-19 ordinal scale outcomes for 1062 patients.
+A dataset with COVID-19 ordinal scale outcomes for 1062 patients.
 }
 \examples{
 #Frequencies

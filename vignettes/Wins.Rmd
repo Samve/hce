@@ -1,6 +1,6 @@
 ---
 title: "Wins"
-date: "`r format(as.Date('2023-01-20'), '%d %B, %Y')`"
+date: "`r format(as.Date('2023-08-01'), '%d %B, %Y')`"
 author:
   - name: "Samvel B. Gasparyan"
     affiliation: https://gasparyan.co/
@@ -39,14 +39,13 @@ For citing the package run `citation("hce")` [@hce].
 
 Two treatment groups are compared using an ordinal endpoint and each comparison results in a win, loss, or a tie for the patient in the active group compared to a patient in the placebo group. All possible (overall) combinations are denoted by $O$, with $W$ denoted the total wins for the active group, $L$ total losses, and $T$ the total ties, so that $O=W+L+T.$ Then the following quantities are called **win statistics**
 
-- **Win proportion** defined as $WP=\frac{W+0.5T}{O}$, that is, the total number of wins, added half of the total number of ties, divided by the overall number of comparisons.
-- **Number needed to treat** defined as $NNT=\frac{1}{2WP-1}$ rounded up to the nearest natural number.
+- **Win probability** defined as $WP=\frac{W+0.5T}{O}$, that is, the total number of wins, added half of the total number of ties, divided by the overall number of comparisons.
+- **Number needed to treat** defined as $NNT=\frac{1}{2WP-1}=\frac{O}{W-L}$ (rounded up to the nearest natural number for interpretation).
 - **Win ratio** defined as $WR=\frac{W}{L}$.
 - **Win odds** defined as $WO=\frac{W+0.5T}{L+0.5T} = \frac{WP}{1-WP}$.
-- **Net Benefit** defined as $NB=\frac{W - L}{O}$.
+- **Net Benefit** defined as $NB=\frac{W - L}{O}=2WP-1=\frac{1}{NNT}$.
 
-Given the overall number of comparisons $O,$ the win proportion $WP$ and the win ratio $WR$, it is possible to find the total number of wins and losses. Indeed, first the win odds can be found $WO=\frac{WP}{WP+1}$ and
-
+Given the overall number of comparisons $O,$ the win proportion $WP$ and the win ratio $WR$, it is possible to find the total number of wins and losses. 
 \begin{align*}
 &L = O*\frac{2WP-1}{WR-1},\nonumber\\
 &W = WR*L = WR*O*\frac{2WP-1}{WR-1},\nonumber\\
@@ -71,6 +70,8 @@ In case we have $n_1=120$ patients in the placebo group and $n_2=150$ in the act
 propWINS(WO = 1.25, WR = 1.5, Overall = 120*150)
 ```
 
+
+The concept of winning for the active group is the same as concordance for the active group. For two variables, $X$ and $Y,$ this pair is concordant if the observation with the larger value of $X$ also has the better value of $Y$ [@agresti2013categorical]. If $X$ indicates the treatment group with the value 1 for the active group and the value 0 for the control group, and the variable $Y$ is the ordinal value for the analysis, then concordance means that a patient with the active treatment has a better value than a patient with the control, while the discordance means the patient in the active group has a worse value than the control patient. Therefore, the win ratio is the total number of concordances divided by the total number of discordances. The win ratio can be obtained from the Goodman-Kruskal gamma [@kruskal1954measures], $G$, as follows $WR=(1+G)/(1-G)$. The net benefit is  Somers' D C/R [@somers1962new], while the win odds is the Mann-Whitney odds [@mann1947test]. Estimation of win statistics in the absence of censoring can be done using the theory of *U*-statistics [@Hoeff].
 
 ## References
 

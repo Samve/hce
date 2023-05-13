@@ -16,7 +16,7 @@
 #' @return an object of class hce.
 #' @export
 #' @md
-#' @seealso [hce::hce()], [hce::new_hce()], [hce::validate_hce()]  for the helper, constructor, and validator functions of hce.
+#' @seealso [hce::hce()], [hce::as_hce()] for the helper a coerce function to hce objects.
 #' @examples
 #' # Example 1
 #' Rates_A <- c(1.72, 1.74, 0.58, 1.5, 1)
@@ -99,7 +99,7 @@ simHCE <- function(n, n0 = n, TTE_A, TTE_P, CM_A, CM_P, CSD_A = 1, CSD_P = 1, fi
   dat <- dat[ , c("ID", "TRTP", "GROUP", "GROUPN", "AVALT", "AVAL0", "AVAL", "ord", "seed")]
   dat$TTEfixed <- fixedf
   
-  dat <- new_hce(dat)
+  dat <- as_hce(dat)
   return(dat)
 
 }

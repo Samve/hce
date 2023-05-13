@@ -68,5 +68,5 @@ dat <- simHCE(n = 1000, n0 = 500, TTE_A = Rates_A, TTE_P = Rates_P, CM_A = 2, CM
 summaryWO(dat)
 }
 \seealso{
-\code{\link[=hce]{hce()}}, \code{\link[=new_hce]{new_hce()}}, \code{\link[=validate_hce]{validate_hce()}}  for the helper, constructor, and validator functions of hce.
+\code{\link[=hce]{hce()}}, \code{\link[=as_hce]{as_hce()}} for the helper a coerce function to hce objects.
 }
