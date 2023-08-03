@@ -5,7 +5,8 @@
 #'
 #' @return an `hce` object.
 #' @export
-#'
+#' @md
+#' @seealso [hce::as_hce.data.frame()].
 #' @examples
 #' ### data frames 
 #' data(HCE1)

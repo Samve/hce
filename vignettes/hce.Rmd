@@ -1,0 +1,69 @@
+---
+title: "Hierarchical composite endpoints"
+date: "`r format(as.Date('2023-08-01'), '%d %B, %Y')`"
+author:
+  - name: "Samvel B. Gasparyan"
+    affiliation: https://gasparyan.co/
+output:
+  rmarkdown::html_document:
+          theme: "darkly"
+          highlight: "zenburn"
+          toc: true
+          toc_float: true
+          link-citations: true 
+bibliography: REFERENCES.bib
+vignette: >
+  %\VignetteIndexEntry{Hce}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Introduction
+
+
+### Setup
+
+Load the package `hce` and check the version
+
+```{r setup}
+library(hce)
+packageVersion("hce")
+```
+
+For citing the package run `citation("hce")` [@hce].
+
+### Definitions
+
+Prioritized outcome composite endpoints (POCE) are a general class of endpoints combining different clinical outcomes of patients into a composite so as to preserve their different natures. A particular case of these endpoints is the hierarchical composite endpoint (HCE). It is evaluated in a fixed follow-up period and accounts for the patient’s clinically most important outcome for the analysis. HCEs are analyzed using win odds and other win statistics.
+
+## Examples
+
+Here we provide examples of HCE using in clinical trials from different therapeutic areas.
+
+### COVID-19
+
+The DARE-19 [@kosiborod2021effects;@kosiborod2021dapagliflozin] trial used an HCE to assess outcomes in patients hospitalized for COVID-19 and treated for 30 days. The COVID-19 HCE is presented below. It combines death, in hospital organ dysfunction events with clinical status at Day 30 for patients alive, still hospitalized but without previous organ dysfunction events, and hospital discharge as the most favorable outcome for patients discharging without organ dysfunction events and being alive at Day 30.
+
+```{r echo=FALSE}
+HCE <- data.frame(Order = c("I", "II", "III", "IV", "V"), 
+                  Category = c("Death", "More than one new or worsened organ dysfunction events", 
+                               "One new or worsened organ dysfunction event", 
+                               "Hospitalized at the end of follow-up (Day 30)", 
+                               "Discharged from hospital before Day 30")
+)
+HCE
+```
+
+
+### Heart failure
+
+### Chronic kidney disease
+
+## References
