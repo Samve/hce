@@ -28,6 +28,8 @@ R <- function() knitr::include_graphics("Rlogo.png", dpi = 5000)
 
 ## `hce` package intro
 
+### Setup
+
 Load the package `hce` and check the version
 
 ```{r eval=TRUE}
@@ -39,8 +41,9 @@ packageVersion("hce")
 devtools::load_all()
 ```
 
-
 For citing the package run `citation("hce")` [@hce].
+
+### Contents
 
 List the functions and the datasets in the package
 
@@ -56,7 +59,7 @@ In brief, the package contains the following:
 
 - The datasets `COVID19`, `COVID19b` of COVID-19 ordinal scale outcomes [@beigel2020remdesivir].
 
-- The datasets `ADET` (event-time), `ADLB` (laboratory), `ADSL` (subject-level baseline characteristics) datasets, correspondingly, for kidney events and their timing, kidney related laboratory measurements of eGFR (estimated glomerular filtration rate), and, based on this, derived kidney hierarchical composite endpoint dataset `KHCE` for the same patients [@khce1].
+- The datasets `ADET` (event-time), `ADLB` (laboratory), `ADSL` (subject-level baseline characteristics) datasets, correspondingly, for kidney events and their timing, kidney related laboratory measurements of eGFR (estimated glomerular filtration rate), and, based on this, derived kidney hierarchical composite endpoint dataset `KHCE` for the same patients [@khce2].
 
 2. Functions to create `hce` objects - `hce(), as_hce(), simHCE()` (see @gasparyan2022design).
 3. Win odds (win ratio with ties) calculation generic functions for hierarchical composite endpoints - `calcWO(), summaryWO()` (see @gasparyan2021adjusted, @gasparyan2021power).
@@ -82,7 +85,7 @@ HCE are ordinal endpoints that can be thought of as having 'greater', 'less' or 
 args("hce")
 ```
  
-We see that the required arguments are `EVENT`, which specifies clinically the most important event of a patient to be included in the analysis and `TRTP` which specifies the (planned) treatment group of a patient (exactly two treatment groups should be present). Note that
+We see that the required arguments are `GROUP`, which specifies clinically the most important event of a patient to be included in the analysis and `TRTP` which specifies the (planned) treatment group of a patient (exactly two treatment groups should be present). Note that
 
 - `hce` structure assumes that only one event per patient is present for the analysis, meaning that the resulting `hce` object created by the `hce()` function is a patient-level dataset. The function `hce()` does not do a selection of the clinically most important event of the patient but requires it to be already done when calling it.
 

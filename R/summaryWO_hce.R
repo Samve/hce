@@ -20,7 +20,6 @@ summaryWO.hce <- function(x, ...){
   if(!is.null(Args[["ref"]])) ref <- Args[["ref"]]
   else if ("P" %in% unique(x$TRTP)) ref <- "P"
   else ref <- unique(x$TRTP)[1]
-  
 
   summaryWO.data.frame(x = x, AVAL = "AVAL", TRTP = "TRTP", ref = ref, GROUP = "GROUP")
 }

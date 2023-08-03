@@ -23,3 +23,6 @@ data(HCE1)
 HCE <- as_hce(HCE1)
 calcWINS(HCE)
 }
+\seealso{
+\code{\link[=as_hce.data.frame]{as_hce.data.frame()}}.
+}

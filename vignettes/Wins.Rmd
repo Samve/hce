@@ -1,5 +1,5 @@
 ---
-title: "Wins"
+title: "Win statistics"
 date: "`r format(as.Date('2023-08-01'), '%d %B, %Y')`"
 author:
   - name: "Samvel B. Gasparyan"
@@ -27,6 +27,9 @@ knitr::opts_chunk$set(
 
 ## Win odds, win ratio, and net benefit
 
+
+### Setup
+
 Load the package `hce` and check the version
 
 ```{r setup}
@@ -34,8 +37,17 @@ library(hce)
 packageVersion("hce")
 ```
 
-
 For citing the package run `citation("hce")` [@hce].
+
+### Terminology
+
+The concept of win probability for the binary and continuous outcomes has been described in the paper by @buyse2010generalized as "proportion in favor of treatment" (see also @rauch2014opportunities), while in @verbeeck2020unbiasedness it is called "probabilistic index".
+
+The concept of "win ratio" was introduced in @poc2012, which, unlike the win odds, does not account for ties, whereas the win odds is the odds of winning, following @dong2020 (see also @peng2020use; @brunner2021win; @gasparyan2021power). The same statistic was named as Mann-Whitney odds in @obrien2006. In @gasparyan2021adjusted the "win ratio" was used as a general term and included ties in the definition. @dong2022winwinnet suggested to consider win ratio, win odds, and net benefit together as win statistics.
+
+The concept of winning for the active group is the same as concordance for the active group. For two variables, $X$ and $Y,$ this pair is concordant if the observation with the larger value of $X$ also has the better value of $Y$ [@agresti2013categorical]. If $X$ indicates the treatment group with the value 1 for the active group and the value 0 for the control group, and the variable $Y$ is the ordinal value for the analysis, then concordance means that a patient with the active treatment has a better value than a patient with the control, while the discordance means the patient in the active group has a worse value than the control patient. Therefore, the win ratio is the total number of concordances divided by the total number of discordances. The win ratio can be obtained from the Goodman-Kruskal gamma [@kruskal1954measures], $G$, as follows $WR=(1+G)/(1-G)$. The net benefit is  Somers' D C/R [@somers1962new], while the win odds is the Mann-Whitney odds [@mann1947test]. Estimation of win statistics in the absence of censoring can be done using the theory of *U*-statistics [@Hoeff].
+
+### Definitions
 
 Two treatment groups are compared using an ordinal endpoint and each comparison results in a win, loss, or a tie for the patient in the active group compared to a patient in the placebo group. All possible (overall) combinations are denoted by $O$, with $W$ denoted the total wins for the active group, $L$ total losses, and $T$ the total ties, so that $O=W+L+T.$ Then the following quantities are called **win statistics**
 
@@ -53,10 +65,6 @@ Given the overall number of comparisons $O,$ the win proportion $WP$ and the win
 \end{align*}
 
 
-The concept of win probability for the binary and continuous outcomes has been described in the paper by @buyse2010generalized as "proportion in favor of treatment" (see also @rauch2014opportunities), while in @verbeeck2020unbiasedness it is called "probabilistic index".
-
-The concept of "win ratio" was introduced in @poc2012, which, unlike the win odds, does not account for ties, whereas the win odds is the odds of winning, following @dong2020 (see also @peng2020use; @brunner2021win; @gasparyan2021power). The same statistic was named as Mann-Whitney odds in @obrien2006. In @gasparyan2021adjusted the "win ratio" was used as a general term and included ties in the definition. @dong2022winwinnet suggested to consider win ratio, win odds, and net benefit together as win statistics.
-
 The function `propWINS()` implements the formula above
 
 ```{r}
@@ -71,7 +79,7 @@ propWINS(WO = 1.25, WR = 1.5, Overall = 120*150)
 ```
 
 
-The concept of winning for the active group is the same as concordance for the active group. For two variables, $X$ and $Y,$ this pair is concordant if the observation with the larger value of $X$ also has the better value of $Y$ [@agresti2013categorical]. If $X$ indicates the treatment group with the value 1 for the active group and the value 0 for the control group, and the variable $Y$ is the ordinal value for the analysis, then concordance means that a patient with the active treatment has a better value than a patient with the control, while the discordance means the patient in the active group has a worse value than the control patient. Therefore, the win ratio is the total number of concordances divided by the total number of discordances. The win ratio can be obtained from the Goodman-Kruskal gamma [@kruskal1954measures], $G$, as follows $WR=(1+G)/(1-G)$. The net benefit is  Somers' D C/R [@somers1962new], while the win odds is the Mann-Whitney odds [@mann1947test]. Estimation of win statistics in the absence of censoring can be done using the theory of *U*-statistics [@Hoeff].
+
 
 ## References
 

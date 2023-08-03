@@ -18,7 +18,7 @@ a data frame with 13980 rows and 8 variables:
 }
 }
 \source{
-Little, Dustin J., Gasparyan, Samvel B., et al. "Validity and utility of a hierarchical composite endpoint for clinical trials of kidney disease progression: A review." Journal of the American Society of Nephrology (2023).
+Heerspink, Hiddo L., et al. “Development and validation of a new hierarchical composite endpoint for clinical trials of kidney disease progression.” Journal of the American Society of Nephrology (2023).
 }
 \usage{
 ADLB
