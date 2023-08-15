@@ -14,7 +14,7 @@ a data frame with 1500 rows and 4 variables:
 }
 }
 \source{
-Heerspink, Hiddo L., et al. “Development and validation of a new hierarchical composite endpoint for clinical trials of kidney disease progression.” Journal of the American Society of Nephrology (2023).
+Heerspink HL et al "Development and validation of a new hierarchical composite endpoint for clinical trials of kidney disease progression." Journal of the American Society of Nephrology (2023).
 }
 \usage{
 ADSL
