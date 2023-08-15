@@ -73,7 +73,7 @@
 #'   \item{GROUP}{type of the event, ordinal outcomes 1-8, where a higher value means a better outcome}
 #'   \item{TRTP}{treatment values, A Active or P Placebo, character}
 #' }
-#' @source Beigel, John H., et al. "Remdesivir for the treatment of Covid-19—final report." New England Journal of Medicine 383.19 (2020): 1813-1836 <doi:10.1056/NEJMoa2007764>.
+#' @source Beigel JH et al "Remdesivir for the treatment of Covid-19-final report." New England Journal of Medicine 383.19 (2020): 1813-1836 <doi:10.1056/NEJMoa2007764>.
 #' @examples
 #' #Frequencies
 #' table(COVID19)
@@ -95,7 +95,7 @@
 #'   \item{GROUP}{type of the event, ordinal outcomes 1-8, where a higher value means a better outcome}
 #'   \item{TRTP}{treatment values, Active or Placebo, character}
 #' }
-#' @source Beigel, John H., et al. "Remdesivir for the treatment of Covid-19—preliminary report." New England Journal of Medicine 383.19 (2020): 1813-1836 <doi:10.1056/NEJMoa2007764>.
+#' @source Beigel JH et al "Remdesivir for the treatment of Covid-19-final report." New England Journal of Medicine 383.19 (2020): 1813-1836 <doi:10.1056/NEJMoa2007764>.
 #' @examples
 #' #Frequencies
 #' table(COVID19b)
@@ -124,9 +124,10 @@
 #'   \item{STRATAN}{strata 1-4, higher value means more severe kidney disease, numeric}
 #'   \item{EGFRBL}{Baseline GFR values of patients, numeric}
 #'   \item{TRTP}{treatment values, A Active or P Placebo, character}
+#'   \item{PADY}{primary analysis day (in years), length of the fixed follow-up, numeric}
 #' }
 #' @source 
-#' Heerspink, Hiddo L., et al. “Development and validation of a new hierarchical composite endpoint for clinical trials of kidney disease progression.” Journal of the American Society of Nephrology (2023).
+#' Heerspink HL et al "Development and validation of a new hierarchical composite endpoint for clinical trials of kidney disease progression." Journal of the American Society of Nephrology (2023).
 #' @examples
 #' # Adjusted win odds
 #' res <- regWO(x = KHCE, AVAL = "AVAL", TRTP = "TRTP", COVAR = "STRATAN", ref = "P")
@@ -149,7 +150,7 @@
 #'   \item{TRTPN}{treatment values, 1 Active or 2 Placebo, numeric}
 #' }
 #' @source
-#' Heerspink, Hiddo L., et al. “Development and validation of a new hierarchical composite endpoint for clinical trials of kidney disease progression.” Journal of the American Society of Nephrology (2023). 
+#' Heerspink HL et al "Development and validation of a new hierarchical composite endpoint for clinical trials of kidney disease progression." Journal of the American Society of Nephrology (2023). 
 #' @examples
 #' head(ADET)
 #' # Number of unique patients
@@ -176,7 +177,7 @@
 #'   \item{PARAMN}{type of the event is set to 7 for all measurements, numeric}
 #' }
 #' @source 
-#' Heerspink, Hiddo L., et al. “Development and validation of a new hierarchical composite endpoint for clinical trials of kidney disease progression.” Journal of the American Society of Nephrology (2023).
+#' Heerspink HL et al "Development and validation of a new hierarchical composite endpoint for clinical trials of kidney disease progression." Journal of the American Society of Nephrology (2023).
 #' @examples
 #' head(ADLB)
 "ADLB"
@@ -195,7 +196,7 @@
 #'   \item{STRATAN}{strata 1-4, higher value means a higher risk for kidney disease progression, numeric}
 #' }
 #' @source 
-#' Heerspink, Hiddo L., et al. “Development and validation of a new hierarchical composite endpoint for clinical trials of kidney disease progression.” Journal of the American Society of Nephrology (2023).
+#' Heerspink HL et al "Development and validation of a new hierarchical composite endpoint for clinical trials of kidney disease progression." Journal of the American Society of Nephrology (2023).
 #' @examples
 #' head(ADSL)
 "ADSL"

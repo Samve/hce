@@ -1,6 +1,6 @@
 ---
 title: "Win statistics"
-date: "`r format(as.Date('2023-08-01'), '%d %B, %Y')`"
+date: "`r format(as.Date('2023-08-14'), '%d %B, %Y')`"
 author:
   - name: "Samvel B. Gasparyan"
     affiliation: https://gasparyan.co/
@@ -72,7 +72,7 @@ args("propWINS")
 propWINS(WO = 1.5, WR = 2)
 ```
 
-In case we have $n_1=120$ patients in the placebo group and $n_2=150$ in the active group and need to know given the win ratio and win odds above how many wins and losses we will have for the active group then the argument `Overall` can be used to specify the number of all comparisons
+Suppose there are $n_1=120$ patients in the placebo group and $n_2=150$ in the active group. If win ratio is 1.5 and the win odds is 1.25, then the number of wins and losses for the active group can be calculated using the argument `Overall` for all possible comparisons.
 
 ```{r}
 propWINS(WO = 1.25, WR = 1.5, Overall = 120*150)

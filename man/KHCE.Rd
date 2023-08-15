@@ -18,10 +18,11 @@ a data frame with 1500 rows and 11 variables:
 \item{STRATAN}{strata 1-4, higher value means more severe kidney disease, numeric}
 \item{EGFRBL}{Baseline GFR values of patients, numeric}
 \item{TRTP}{treatment values, A Active or P Placebo, character}
+\item{PADY}{primary analysis day (in years), length of the fixed follow-up, numeric}
 }
 }
 \source{
-Heerspink, Hiddo L., et al. “Development and validation of a new hierarchical composite endpoint for clinical trials of kidney disease progression.” Journal of the American Society of Nephrology (2023).
+Heerspink HL et al "Development and validation of a new hierarchical composite endpoint for clinical trials of kidney disease progression." Journal of the American Society of Nephrology (2023).
 }
 \usage{
 KHCE
