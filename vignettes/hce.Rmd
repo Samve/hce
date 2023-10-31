@@ -128,7 +128,7 @@ and `ADET` for the time-to-event outcomes with their timing.
 knitr::kable(head(ADET), caption = "ADET dataset structure\\label{adet}")
 ```
 
-For the detailed derivation see the [Technical Appendix](https://links.lww.com/JSN/E542) in @khce2.
+For the detailed derivation see the [Technical Appendix](https://cdn-links.lww.com/permalink/jsn/e/jsn_2023_09_29_heerspink_1_sdc1.pdf) in @khce2.
 
 
 
