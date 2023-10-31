@@ -1,11 +1,11 @@
 Type: Package
 Package: hce
 Title: Design and Analysis of Hierarchical Composite Endpoints
-Version: 0.5.8
+Version: 0.5.9
 Authors@R: 
     person("Samvel B.", "Gasparyan", , "gasparyan.co@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-4797-2208"))
-Description: Simulate and analyze hierarchical composite endpoints. Win odds is the main analysis method. See Gasparyan SB et al (2022) <doi:10.1007/s43441-022-00420-1>.
+Description: Simulate and analyze hierarchical composite endpoints. Win odds is the main analysis method. See Gasparyan SB et al (2022) "Design and Analysis of Studies Based on Hierarchical Composite Endpoints: Insights from the DARE-19 Trial." Ther Innov Regul Sci 56: 785–794. <doi:10.1007/s43441-022-00420-1>.
 License: MIT + file LICENSE
 Depends: 
     R (>= 2.10)
