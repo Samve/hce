@@ -1,8 +1,3 @@
-# hce 0.7.3
-
-* Fixed a bug in `summaryWO.formula()` that previously caused errors when `GROUP` values were used.
-* The function `simADHCE()` has been replaced by the `all_data = TRUE` implementation in `simHCE()`.
-
 # hce 0.7.2
 
 * `regWO()` and `stratWO()` are updated to return the confidence interval for the adjusted and stratified (or adjusted/stratified) win probability as well.
