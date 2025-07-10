@@ -1,6 +1,7 @@
 #' Simulate a kidney disease `hce` dataset
 #'
-#' Simulate a kidney disease `hce` dataset: eGFR (Estimated Glomerular Filtration Rate) over time and a competing, correlated KFRT (Kidney Failure Replacement Therapy) terminal events
+#' Simulate a kidney disease `hce` dataset, capturing eGFR (Estimated Glomerular Filtration Rate) progression over time, along with 
+#' a competing and dependent terminal event: KFRT (Kidney Failure Replacement Therapy)
 #' 
 #' @param n sample size in the active treatment group.
 #' @param CM_A annualized eGFR slope in the active group.
@@ -24,12 +25,12 @@
 #' # Example 1
 #' set.seed(2022)
 #' L <- simKHCE(n = 1000, CM_A = -3.25)
-#' dat <- as_hce(L$HCE)
+#' dat <- L$HCE
 #' calcWO(dat)
-simKHCE <- function(n, CM_A, CM_P = - 4, n0 = n, TTE_A = 4.25, TTE_P = TTE_A,  
+simKHCE <- function(n, CM_A, CM_P = - 4, n0 = n, TTE_A = 10, TTE_P = TTE_A,  
                    fixedfy = 2, Emin = 20, Emax = 100, 
-                   sigma = sqrt(0.67* (Emin + Emax)/2), Sigma = 3,
-                   m = 10, theta = -0.15, phi = 0){
+                   sigma = 8, Sigma = 3,
+                   m = 10, theta = -0.23, phi = 0){
   n <- n[1] 
   CM_A <- CM_A[1] 
   CM_P <- CM_P[1] 
@@ -125,9 +126,11 @@ simKHCE <- function(n, CM_A, CM_P = - 4, n0 = n, TTE_A = 4.25, TTE_P = TTE_A,
     t0 <- dat[i, "ADAY"]
     # use one month for the confirmation of the sustained decline
     t1 <- t0 + 1/12
+    # selects the analysis day immediately after the 1-month window
     j <- which(dat$ADAY > t1)[1]
     if(is.na(i) | is.na(j)) 
       return(NULL)
+    # Requires that all measurements during the window satisfy the criteria
     if(x %in% c("E57", "E50", "E40") & all(dat[i:j, "PCHG"] <= thr)){
       dat0 <- dat[i, c("ID", "ADAY", x)]
       names(dat0) <- c("ID", "ADAY", "EVENT")
@@ -178,14 +181,14 @@ simKHCE <- function(n, CM_A, CM_P = - 4, n0 = n, TTE_A = 4.25, TTE_P = TTE_A,
   d4 <- d4[order(d4$ID), ]
   d5 <- unique(d[, c("ID", "TRTPN", "PADY", "BASE")])
   d6 <- merge(d5, d4, by = "ID")
-  d6$GROUPN <- d6$PARAMN*d6$PADY
-  m0 <- ifelse(any(d6$PARAMCD == "GFR"), min(d6$AVAL0[d6$PARAMCD == "GFR"]), 0)
-  d6$AVAL <- ifelse(d6$PARAMCD != "GFR", d6$GROUPN + d6$AVAL0, d6$GROUPN + d6$AVAL0 - m0 + 1)
-
   ADLB$TRTP <- ifelse(ADLB$TRTPN == 1, "A", "P")
   ADET <- d4
   HCE <- d6
   HCE$TRTP <- ifelse(HCE$TRTPN == 1, "A", "P")
-  L <- list(GFR = ADLB, ADET = ADET, HCE = HCE)
+  HCE$GROUP <- factor(HCE$PARAMCD, levels = c("KFRT", "E15", "E40", "E50", "E57", "GFR"))
+  levels(HCE$GROUP) <- c("Kidney Failure Replacement Therapy", "Sustained eGFR < 15 (mL/min/1.73 m2)", 
+                         "Sustained >= 57% decline in eGFR", "Sustained >= 50% decline in eGFR", 
+                         "Sustained >= 40% decline in eGFR", "eGFR slope")
+  L <- list(GFR = ADLB, ADET = ADET, HCE = as_hce(HCE))
   return(L)
 }
