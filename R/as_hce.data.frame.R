@@ -8,8 +8,17 @@
 #' @md
 #' @seealso [hce::as_hce()], [hce::as_hce.default()].
 #' @examples
+#' # The case when all required variables `AVAL0`, `GROUP`, `PADY`, and `TRTP` are present.
 #' KHCE <- as_hce(KHCE)
+#' ## Converts to an `adhce` object
+#' class(KHCE)
 #' calcWO(KHCE)
+#' # The case when only `AVAL` and `TRTP`.
+#' ## Converts to an `hce` object
+#' dat <- KHCE[, c("TRTP", "AVAL")]
+#' dat <- as_hce(dat)
+#' class(dat)
+#' summaryWO(dat)
 as_hce.data.frame <- function(x, ...){
   ## Validator function for hce objects
   .validate_hce <- function(x){

@@ -1,4 +1,8 @@
-# hce 0.7.5
+# hce 0.8.1
+
+* Added an implementation `summaryWO.adhce()` to provide the summaries by `GROUP`, as opposed to `summaryWO.hce()`, which works without grouping by this variable.
+
+# hce 0.8.0
 
 * Fixed a bug in `summaryWO.formula()` that previously caused errors when `GROUP` values were used.
 * The function `simADHCE()` has been replaced by the `all_data = TRUE` implementation in `simHCE()`.

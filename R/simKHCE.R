@@ -58,9 +58,11 @@ simKHCE <- function(n, CM_A, CM_P = - 4, n0 = n, TTE_A = 10, TTE_P = TTE_A,
   # Patient ID and treatment group
   d <- data.frame(ID = 1:N, TRTPN = c( rep(1, n),  rep(0, n0)))
   # Random patient-level slope with a given between-patient variability Sigma^2
-  d$SLOPE <- b0 + b1*d$TRTPN + stats::rnorm(N, sd = Sigma)
+  d$SLOPE <- b0 + stats::rnorm(N, mean = 0, sd = Sigma)
   # Implement proportionality for patients in the active group and negative (true) random slope
   d$SLOPE <- ifelse(d$TRTPN == 1 & d$SLOPE < 0, d$SLOPE*(1 - phi), d$SLOPE)
+  # Implement additive effect (slope difference) for the patients in the active group
+  d$SLOPE <-  d$SLOPE + b1*d$TRTPN 
   # Uniform random (true) baseline GFR from a given range. The observed baseline BASE will be different because of the sampling error (within-patient variability).
   d$BASE0 <- stats::runif(N, Emin, Emax)
   # Equidistant visit times. The number of visits is m + 1. Includes both the baseline visit and the visit at the end of the timeframe.
