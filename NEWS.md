@@ -1,7 +1,13 @@
-# hce 0.7.3
+# hce 0.8.1
+
+* Added an implementation `summaryWO.adhce()` to provide the summaries by `GROUP`, as opposed to `summaryWO.hce()`, which works without grouping by this variable.
+
+# hce 0.8.0
 
 * Fixed a bug in `summaryWO.formula()` that previously caused errors when `GROUP` values were used.
 * The function `simADHCE()` has been replaced by the `all_data = TRUE` implementation in `simHCE()`.
+* The function `simHCE()` now returns an object of a new class called `adhce`. This class inherits from the `hce` class, which itself is a subclass of `data.frame`. The underlying structure of the returned object remains unchanged. The introduction of the `adhce` class is intended to clearly distinguish these structured outputs from the more general `hce` objects. Specifically, an `adhce` object is an analysis-ready `hce` object that is derived using multiple time-to-event outcomes and a single continuous (ordinal or score) endpoint.
+* The function `as_hce()` has been updated to support additional output flexibility. If the input data includes the variables `TRTP`, `GROUP`, `AVAL0`, and `PADY`, the function will return an `adhce` object. In this scenario, even if the `AVAL` variable is present, it will be recalculated based on the provided data to ensure consistency with the `adhce` structure. If only the `TRTP` and `AVAL` variables are available, `as_hce()` will return a standard `hce` object. This enhancement allows users to generate either general or analysis-ready `hce` objects, depending on the available input variables.
 
 # hce 0.7.2
 

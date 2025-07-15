@@ -9,15 +9,15 @@ simKHCE(
   CM_A,
   CM_P = -4,
   n0 = n,
-  TTE_A = 4.25,
+  TTE_A = 10,
   TTE_P = TTE_A,
   fixedfy = 2,
   Emin = 20,
   Emax = 100,
-  sigma = sqrt(0.67 * (Emin + Emax)/2),
+  sigma = 8,
   Sigma = 3,
   m = 10,
-  theta = -0.15,
+  theta = -0.23,
   phi = 0
 )
 }
@@ -54,13 +54,14 @@ simKHCE(
 a list containing the dataset \code{GFR} for longitudinal measurements of eGFR and the competing KFRT events, the dataset \code{ADET} for the time-to-event kidney outcomes (sustained declines or sustained low levels of eGFR), and the combined \code{HCE} dataset for the kidney hierarhical composite endpoint.
 }
 \description{
-Simulate a kidney disease \code{hce} dataset: eGFR (Estimated Glomerular Filtration Rate) over time and a competing, correlated KFRT (Kidney Failure Replacement Therapy) terminal events
+Simulate a kidney disease \code{hce} dataset, capturing eGFR (Estimated Glomerular Filtration Rate) progression over time, along with
+a competing and dependent terminal event: KFRT (Kidney Failure Replacement Therapy)
 }
 \examples{
 # Example 1
 set.seed(2022)
 L <- simKHCE(n = 1000, CM_A = -3.25)
-dat <- as_hce(L$HCE)
+dat <- L$HCE
 calcWO(dat)
 }
 \seealso{
