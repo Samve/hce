@@ -11,7 +11,8 @@
 #' @seealso [hce::calcWO()], [hce::summaryWO()], [hce::summaryWO.data.frame()], [hce::summaryWO.formula()], [hce::summaryWO.hce()] methods.
 #' @examples
 #' dat <- as_hce(HCE4)
-#' ## `PADY` is not present in the dataset, hence converts it to an `hce` object instead of an `adhce` object.
+#' ## `PADY` is not present in the dataset, hence converts it to an `hce` object 
+#' ## instead of an `adhce` object.
 #' class(dat)
 #' summaryWO(dat, ref = "P")
 #' ## The class is `adhce` hence will use the variable `GROUP`.

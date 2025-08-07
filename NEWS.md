@@ -1,6 +1,8 @@
-# hce 0.8.1
+# hce 0.8.3
 
 * Added an implementation `summaryWO.adhce()` to provide the summaries by `GROUP`, as opposed to `summaryWO.hce()`, which works without grouping by this variable.
+* Details have been added regarding the implementation of the `simKHCE()` function. The function has been updated to return all time-to-event outcomes for each patient in the `ADET` dataset.
+* A bug has been fixed in `regWO()`, which previously caused the results to depend on the order of the input dataset. This issue also affected the `stratWO()` function, since it calls `regWO()`. A similar issue in the `IWP()` has also been fixed. The bug was reported by Cyrill Scheidegger. 
 
 # hce 0.8.0
 
