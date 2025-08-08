@@ -99,3 +99,20 @@ test_that("WP based on the IWP calculation matches the calcWO results", {
     calcWO(EGFRBL ~ TRTP, data = KHCE)[c("WP", "SE_WP")]$WP
   )
 })
+
+
+
+test_that("SE for the adjusted WP comparison to the sanon package", {
+  expect_equal(
+    regWO(AVAL ~ TRTP + EGFRBL, data = KHCE)$SE_beta*sqrt(nrow(KHCE)/(nrow(KHCE) - 1)),
+    0.0147476911574
+  )
+})
+
+
+test_that("Adjusted WP comparison to the sanon package", {
+  expect_equal(
+    regWO(AVAL ~ TRTP + EGFRBL, data = KHCE)$beta,
+    0.569107747079
+  )
+})
