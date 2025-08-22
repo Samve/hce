@@ -1,7 +1,7 @@
 Type: Package
 Package: hce
 Title: Design and Analysis of Hierarchical Composite Endpoints
-Version: 0.8.3
+Version: 0.8.5
 Authors@R: 
     person("Samvel B.", "Gasparyan", , "gasparyan.co@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-4797-2208"))
@@ -17,7 +17,7 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2025-08-08 12:25:05 UTC; samve
+Packaged: 2025-08-22 19:46:50 UTC; ktpz678
 Author: Samvel B. Gasparyan [aut, cre] (ORCID:
     <https://orcid.org/0000-0002-4797-2208>)
 Maintainer: Samvel B. Gasparyan <gasparyan.co@gmail.com>
