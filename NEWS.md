@@ -1,3 +1,8 @@
+# hce 0.8.6
+
+* A bug has been fixed in the `simKHCE()` function related to the implementation of sustained decline.
+
+
 # hce 0.8.5
 
 * Added an implementation `summaryWO.adhce()` to provide the summaries by `GROUP`, as opposed to `summaryWO.hce()`, which works without grouping by this variable.

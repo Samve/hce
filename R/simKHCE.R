@@ -23,7 +23,7 @@
 #' the effect of treatment on KFRT operates entirely through its impact on eGFR decline.
 #' 
 #' The parameters `TTE_A` and `theta` are chosen so that when GFR is 10, the event rate 
-#' is 1 per year, and when GFR is 30, the event rate is 0.01 per year. These
+#' is 1 per patient year, and when GFR is 30, the event rate is 0.01 per patient per year. These
 #' parameter values are obtained by solving the equation `rate0*exp(GFR*theta) = rate` for `rate0`
 #' and `theta`.
 #' @return a list containing the dataset `GFR` for longitudinal measurements of 
@@ -84,7 +84,8 @@ simKHCE <- function(n, CM_A, CM_P = - 4, n0 = n, TTE_A = 10, TTE_P = TTE_A,
   # Merge to get the treatment groups
   d1 <- merge(VISITS, d, all.x = TRUE, by = "ID")
   # Random true slope is observed with a measurement error (within-patient variability is sigma^2)
-  d1$AVAL <- d1$SLOPE*d1$ADAY + d1$BASE0 + stats::rnorm(nrow(d1), sd = sigma)
+  BASE <- d1$BASE0 + stats::rnorm(nrow(d1), sd = sigma)
+  d1$AVAL <- d1$SLOPE*d1$ADAY + ifelse(BASE <= Emin, Emin, ifelse(BASE >= Emax, Emax, BASE))
   # Extract time 0 measurements as baseline (observed baseline with sampling error)
   d2 <- d1[d1$ADAY == 0, c("ID", "AVAL")]
   names(d2) <- c("ID", "BASE")
@@ -134,29 +135,38 @@ simKHCE <- function(n, CM_A, CM_P = - 4, n0 = n, TTE_A = 10, TTE_P = TTE_A,
   d$E57 <- ifelse(d$PCHG <= -57, 1, 0)
   d$E15 <- ifelse(d$AVAL <= 15, 1, 0)
   sustained <- function(dat, x){
+    dat <- as.data.frame(dat)
+    dat <- dat[order(dat$ADAY), ]
+    row.names(dat) <- NULL
     thr0 <- as.numeric(substr(x, 2, 3))
-    thr <- ifelse(x == "E15", thr0, -thr0)
-    i <- which(dat[, x] == 1)[1]
-    t0 <- dat[i, "ADAY"]
-    # use one month for the confirmation of the sustained decline
-    t1 <- t0 + 1/12
-    # selects the analysis day immediately after the 1-month window
-    j <- which(dat$ADAY > t1)[1]
-    if(is.na(i) | is.na(j)) 
+    thr <- ifelse(x == "E15", thr0, - thr0)
+    I <- which(dat[, x] == 1)
+    if(length(I) == 0)
       return(NULL)
-    # Requires that all measurements during the window satisfy the criteria
-    if(x %in% c("E57", "E50", "E40") & all(dat[i:j, "PCHG"] <= thr)){
-      dat0 <- dat[i, c("ID", "ADAY", x)]
-      names(dat0) <- c("ID", "ADAY", "EVENT")
-      dat0$EVENT <- x
-      return(dat0)
+    for(k in 1:length(I)){
+      i <- I[k]
+      t0 <- dat[i, "ADAY"]
+      # use one month for the confirmation of the sustained decline
+      t1 <- t0 + 1/12
+      j <- which(dat$ADAY >= t1)[1]
+      
+      if(is.na(i) | is.na(j)) 
+        next
+      # Requires that all measurements during the window satisfy the criteria
+      if(x %in% c("E57", "E50", "E40") & all(dat[i:j, "PCHG"] <= thr)){
+        dat0 <- dat[i, c("ID", "ADAY", x)]
+        names(dat0) <- c("ID", "ADAY", "EVENT")
+        dat0$EVENT <- x
+        return(dat0)
+      }
+      if(x %in% c("E15") & all(dat[i:j, "AVAL"] < thr)){
+        dat0 <- dat[i, c("ID", "ADAY", x)]
+        names(dat0) <- c("ID", "ADAY", "EVENT")
+        dat0$EVENT <- x
+        return(dat0)
+      }
     }
-    if(x %in% c("E15") & all(dat[i:j, "AVAL"] <= thr)){
-      dat0 <- dat[i, c("ID", "ADAY", x)]
-      names(dat0) <- c("ID", "ADAY", "EVENT")
-      dat0$EVENT <- x
-      return(dat0)
-    }
+    return(NULL)
   }
   l <- lapply(split(d, d$ID), sustained, x = "E40")
   E1 <- do.call(rbind, l)
@@ -202,10 +212,10 @@ simKHCE <- function(n, CM_A, CM_P = - 4, n0 = n, TTE_A = 10, TTE_P = TTE_A,
   ADLB$TRTP <- ifelse(ADLB$TRTPN == 1, "A", "P")
   HCE <- d6
   HCE$TRTP <- ifelse(HCE$TRTPN == 1, "A", "P")
-  HCE$GROUP <- factor(HCE$PARAMCD, levels = c("KFRT", "E15", "E40", "E50", "E57", "GFR"))
+  HCE$GROUP <- factor(HCE$PARAMCD, levels = c("KFRT", "E15", "E57", "E50", "E40", "GFR"))
   levels(HCE$GROUP) <- c("Kidney Failure Replacement Therapy", "Sustained eGFR < 15 (mL/min/1.73 m2)", 
                          "Sustained >= 57% decline in eGFR", "Sustained >= 50% decline in eGFR", 
-                         "Sustained >= 40% decline in eGFR", "eGFR slope")
+                         "Sustained >= 40% decline in eGFR", "Change in eGFR")
   ADET <- rbind(ADET0, d2)
   ADET <- ADET[order(ADET$ID), ]
   L <- list(GFR = ADLB, ADET = ADET, HCE = as_hce(HCE))

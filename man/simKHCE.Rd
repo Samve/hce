@@ -66,7 +66,7 @@ the treatment effect does not influence the event rate of KFRT. In this model,
 the effect of treatment on KFRT operates entirely through its impact on eGFR decline.
 
 The parameters \code{TTE_A} and \code{theta} are chosen so that when GFR is 10, the event rate
-is 1 per year, and when GFR is 30, the event rate is 0.01 per year. These
+is 1 per patient year, and when GFR is 30, the event rate is 0.01 per patient per year. These
 parameter values are obtained by solving the equation \code{rate0*exp(GFR*theta) = rate} for \code{rate0}
 and \code{theta}.
 }
