@@ -104,7 +104,7 @@ test_that("WP based on the IWP calculation matches the calcWO results", {
 
 test_that("SE for the adjusted WP comparison to the sanon package", {
   expect_equal(
-    regWO(AVAL ~ TRTP + EGFRBL, data = KHCE)$SE_beta*sqrt(nrow(KHCE)/(nrow(KHCE) - 1)),
+    regWO(AVAL ~ TRTP + EGFRBL, data = KHCE[sample(1:nrow(KHCE), replace = FALSE),])$SE_beta*sqrt(nrow(KHCE)/(nrow(KHCE) - 1)),
     0.0147476911574
   )
 })
@@ -114,5 +114,16 @@ test_that("Adjusted WP comparison to the sanon package", {
   expect_equal(
     regWO(AVAL ~ TRTP + EGFRBL, data = KHCE)$beta,
     0.569107747079
+  )
+})
+
+FREQ <- c(16, 5, 0, 1, 0, 4, 1, 5, 7, 2)
+dat0 <- data.frame(AVAL = rep(5:1, 2), TRTP = rep(c('A', 'P'), each = 5))
+dat <- dat0[rep(row.names(dat0), FREQ),]
+
+test_that("Brunner-Konietschke variance comparison with a published value", {
+  expect_equal(
+    calcWINS(AVAL ~ TRTP, data = dat,  SE_WP_Type = "unbiased")$SE$WP_SE^2,
+    0.0041708562
   )
 })
