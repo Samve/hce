@@ -26,10 +26,21 @@
 #' is 1 per patient year, and when GFR is 30, the event rate is 0.01 per patient per year. These
 #' parameter values are obtained by solving the equation `rate0*exp(GFR*theta) = rate` for `rate0`
 #' and `theta`.
+#' 
+#' By default, the standard deviation for within-patient variability, `sigma`, is set to `NULL.` When left as `NULL`, `sigma` 
+#' is calculated as `sqrt(0.67*predicted eGFR)`. This approach results in time-dependent variability for measurements, 
+#' where lower predicted eGFR values lead to reduced variability.
 #' @return a list containing the dataset `GFR` for longitudinal measurements of 
 #' eGFR and the competing KFRT events, the dataset `ADET` for the time-to-event 
 #' kidney outcomes (sustained declines or sustained low levels of eGFR), 
 #' and the combined `HCE` dataset for the kidney hierarchical composite endpoint.
+#' 
+#' When `phi = 0`, the treatment effect is fully additive - the same average treatment effect 
+#' applies to all patients, regardless of their baseline disease progression rate (`CM_P`). 
+#' When `phi = 1`, the treatment effect is fully proportional - there is no additive component 
+#' (the value of `CM_A` is irrelevant). 
+#' The more relativistic intermediate treatment effect (half proportional and half additive) 
+#' can be obtained by setting `phi = abs(CM_A - CM_P)/(2*abs(CM_P)).`
 #' @export
 #' @md
 #' @seealso [hce::simHCE()] for a general function of simulating `hce` datasets.
@@ -41,7 +52,7 @@
 #' calcWO(dat)
 simKHCE <- function(n, CM_A, CM_P = - 4, n0 = n, TTE_A = 10, TTE_P = TTE_A,  
                    fixedfy = 2, Emin = 20, Emax = 100, 
-                   sigma = 8, Sigma = 3,
+                   sigma = NULL, Sigma = 3,
                    m = 10, theta = -0.23, phi = 0){
   n <- n[1] 
   CM_A <- CM_A[1] 
@@ -84,6 +95,12 @@ simKHCE <- function(n, CM_A, CM_P = - 4, n0 = n, TTE_A = 10, TTE_P = TTE_A,
   # Merge to get the treatment groups
   d1 <- merge(VISITS, d, all.x = TRUE, by = "ID")
   # Random true slope is observed with a measurement error (within-patient variability is sigma^2)
+  # sigma, by default, is derived based on the formula 0.67*predicted eGFR, which is time dependent.
+  if(is.null(sigma)){
+    VAR <- 0.67*(d1$SLOPE * d1$ADAY + d1$BASE0)
+    VAR[VAR <= 0.1] <- 0.1 #prevent the variance being negative or too small.
+    sigma <- sqrt(VAR)
+  }
   BASE <- d1$BASE0 + stats::rnorm(nrow(d1), sd = sigma)
   d1$AVAL <- d1$SLOPE*d1$ADAY + ifelse(BASE <= Emin, Emin, ifelse(BASE >= Emax, Emax, BASE))
   # Extract time 0 measurements as baseline (observed baseline with sampling error)
