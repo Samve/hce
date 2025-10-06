@@ -1,7 +1,7 @@
 # hce 0.8.6
 
 * A bug has been fixed in the `simKHCE()` function related to the implementation of sustained decline.
-
+* The default value for within-patient variability (`sigma`) in the `simKHCE()` function has been updated. It now depends on the time-dependent predicted eGFR, hence lower eGFR values result in lower variability. 
 
 # hce 0.8.5
 

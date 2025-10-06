@@ -14,7 +14,7 @@ simKHCE(
   fixedfy = 2,
   Emin = 20,
   Emax = 100,
-  sigma = 8,
+  sigma = NULL,
   Sigma = 3,
   m = 10,
   theta = -0.23,
@@ -55,6 +55,13 @@ a list containing the dataset \code{GFR} for longitudinal measurements of
 eGFR and the competing KFRT events, the dataset \code{ADET} for the time-to-event
 kidney outcomes (sustained declines or sustained low levels of eGFR),
 and the combined \code{HCE} dataset for the kidney hierarchical composite endpoint.
+
+When \code{phi = 0}, the treatment effect is fully additive - the same average treatment effect
+applies to all patients, regardless of their baseline disease progression rate (\code{CM_P}).
+When \code{phi = 1}, the treatment effect is fully proportional - there is no additive component
+(the value of \code{CM_A} is irrelevant).
+The more relativistic intermediate treatment effect (half proportional and half additive)
+can be obtained by setting \verb{phi = abs(CM_A - CM_P)/(2*abs(CM_P)).}
 }
 \description{
 Simulate a kidney disease \code{hce} dataset, capturing eGFR (Estimated Glomerular Filtration Rate) progression over time, along with
@@ -69,6 +76,10 @@ The parameters \code{TTE_A} and \code{theta} are chosen so that when GFR is 10, 
 is 1 per patient year, and when GFR is 30, the event rate is 0.01 per patient per year. These
 parameter values are obtained by solving the equation \code{rate0*exp(GFR*theta) = rate} for \code{rate0}
 and \code{theta}.
+
+By default, the standard deviation for within-patient variability, \code{sigma}, is set to \code{NULL.} When left as \code{NULL}, \code{sigma}
+is calculated as \verb{sqrt(0.67*predicted eGFR)}. This approach results in time-dependent variability for measurements,
+where lower predicted eGFR values lead to reduced variability.
 }
 \examples{
 # Example 1
