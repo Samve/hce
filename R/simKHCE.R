@@ -68,8 +68,8 @@ simKHCE <- function(n, CM_A, CM_P = - 4, n0 = n, TTE_A = 10, TTE_P = TTE_A,
   m <- round(m)[1]
   theta <- theta[1]
   phi <- phi[1]
-  stopifnot("The standard deviations `sigma` and `Sigma` should be positive." 
-            = all(c(sigma > 0, Sigma > 0)), 
+  stopifnot("The standard deviations `Sigma` should be positive." 
+            = all(c( Sigma > 0)), 
             "`phi` should be in the interval [0, 1]" = all(c(phi >= 0, phi <= 1)),
             "GFR range `Emin` and `Emax` should be non-negative" = all(c(Emin >= 0, Emax >= 0)))
   N <- n0 + n
