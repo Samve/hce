@@ -9,7 +9,7 @@ simKHCE(
   CM_A,
   CM_P = -4,
   n0 = n,
-  TTE_A = 10,
+  TTE_A = 70,
   TTE_P = TTE_A,
   fixedfy = 2,
   Emin = 20,
@@ -17,8 +17,9 @@ simKHCE(
   sigma = NULL,
   Sigma = 3,
   m = 10,
-  theta = -0.23,
-  phi = 0
+  theta = -0.354,
+  phi = 0,
+  two_meas = c("no", "base", "postbase", "both")
 )
 }
 \arguments{
@@ -49,6 +50,8 @@ simKHCE(
 \item{theta}{coefficient of dependence of eGFR values and the risk of KFRT.}
 
 \item{phi}{coefficient of proportionality (between 0 and 1) of the treatment effect. The case of 0 corresponds to the uniform treatment effect.}
+
+\item{two_meas}{determines whether to use duplicate measurements at baseline and/or at \code{fixedfy}. The default is to use a single measurement.}
 }
 \value{
 a list containing the dataset \code{GFR} for longitudinal measurements of
@@ -72,8 +75,8 @@ The default setting is \code{TTE_A = TTE_P} because, conditional on eGFR level,
 the treatment effect does not influence the event rate of KFRT. In this model,
 the effect of treatment on KFRT operates entirely through its impact on eGFR decline.
 
-The parameters \code{TTE_A} and \code{theta} are chosen so that when GFR is 10, the event rate
-is 1 per patient year, and when GFR is 30, the event rate is 0.01 per patient per year. These
+The parameters \code{TTE_A} and \code{theta} are chosen so that when GFR is 12, the event rate
+is 1 per patient per year, and when GFR is 25, the event rate is 0.01 per patient per year. These
 parameter values are obtained by solving the equation \code{rate0*exp(GFR*theta) = rate} for \code{rate0}
 and \code{theta}.
 
