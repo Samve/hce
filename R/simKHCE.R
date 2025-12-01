@@ -23,25 +23,33 @@
 #' the treatment effect does not influence the event rate of KFRT. In this model,
 #' the effect of treatment on KFRT operates entirely through its impact on eGFR decline.
 #' 
-#' The parameters `TTE_A` and `theta` are chosen so that when GFR is 12, the event rate 
+#' The parameters `TTE_A` and `theta` are chosen so that when GFR is 15, the event rate 
 #' is 1 per patient per year, and when GFR is 25, the event rate is 0.01 per patient per year. These
 #' parameter values are obtained by solving the equation `rate0*exp(GFR*theta) = rate` for `rate0`
-#' and `theta`.
+#' and `theta`. When the observed eGFR is above 30, the event rate is set to a very low value (0.001), 
+#' while when the observed eGFR is below 10, the event rate is set to a very high value (10000). This ensures that patients with observed low eGFR values 
+#' always experience KFRT, while those with high eGFR values do not.
 #' 
 #' By default, the standard deviation for within-patient variability, `sigma`, is set to `NULL.` When left as `NULL`, `sigma` 
 #' is calculated as `sqrt(0.67*predicted eGFR)`. This approach results in time-dependent variability for measurements, 
 #' where lower predicted eGFR values lead to reduced variability.
-#' @return a list containing the dataset `GFR` for longitudinal measurements of 
-#' eGFR and the competing KFRT events, the dataset `ADET` for the time-to-event 
-#' kidney outcomes (sustained declines or sustained low levels of eGFR), 
-#' and the combined `HCE` dataset for the kidney hierarchical composite endpoint.
-#' 
+#'
 #' When `phi = 0`, the treatment effect is fully additive - the same average treatment effect 
 #' applies to all patients, regardless of their baseline disease progression rate (`CM_P`). 
 #' When `phi = 1`, the treatment effect is fully proportional - there is no additive component 
 #' (the value of `CM_A` is irrelevant). 
 #' The more relativistic intermediate treatment effect (half proportional and half additive) 
 #' can be obtained by setting `phi = abs(CM_A - CM_P)/(2*abs(CM_P)).`
+#' 
+#' The kidney hierarchical composite endpoint is defined in the following order: 
+#' (1) Kidney Failure Replacement Therapy (KFRT); (2) Sustained eGFR < 15 mL/min/1.73 m2; 
+#' (3) Sustained ≥57% decline in eGFR; (4) Sustained ≥50% decline in eGFR; (5) Sustained ≥40% decline in eGFR; 
+#' and (6) Change in eGFR. In practice, because KFRT is frequently initiated when true eGFR is very low, 
+#' sustained eGFR < 15 mL/min/1.73 m2 events are rarely observed.
+#' @return a list containing the dataset `GFR` for longitudinal measurements of 
+#' eGFR and the competing KFRT events, the dataset `ADET` for the time-to-event 
+#' kidney outcomes (sustained declines or sustained low levels of eGFR), 
+#' and the combined `HCE` dataset for the kidney hierarchical composite endpoint.
 #' @export
 #' @md
 #' @seealso [hce::simHCE()] for a general function of simulating `hce` datasets.
@@ -51,10 +59,10 @@
 #' L <- simKHCE(n = 1000, CM_A = -3.25)
 #' dat <- L$HCE
 #' calcWO(dat)
-simKHCE <- function(n, CM_A, CM_P = - 4, n0 = n, TTE_A = 70, TTE_P = TTE_A,  
+simKHCE <- function(n, CM_A, CM_P = - 4, n0 = n, TTE_A = 1000, TTE_P = TTE_A,  
                    fixedfy = 2, Emin = 20, Emax = 100, 
                    sigma = NULL, Sigma = 3,
-                   m = 10, theta = -0.354, phi = 0, two_meas = c("no", "base", "postbase", "both")){
+                   m = 10, theta = - .4605, phi = 0, two_meas = c("no", "base", "postbase", "both")){
   two_meas <- match.arg(two_meas)
   n <- n[1] 
   CM_A <- CM_A[1] 
@@ -135,7 +143,7 @@ simKHCE <- function(n, CM_A, CM_P = - 4, n0 = n, TTE_A = 70, TTE_P = TTE_A,
   d3$RATE <- d3$RATE0*exp(c2*(d3$SLOPE*d3$ADAY + d3$BASE0))
   ## Make sure that patients with higher than 30 observed eGFR cannot have KFRT
   ## Make surer that patients with lower than 5 observed eGFR always have KFRT
-  d3$RATE <- ifelse(d3$AVAL > 30, 0.001, ifelse(d3$AVAL < 8, 10000, d3$RATE))
+  d3$RATE <- ifelse(d3$AVAL > 30, 0.001, ifelse(d3$AVAL < 10, 10000, d3$RATE))
   ## Simulate uniform random variables
   d3$U <- stats::runif(nrow(d3))
   ## Calculate the cumulative event rate for each patient
@@ -183,7 +191,7 @@ simKHCE <- function(n, CM_A, CM_P = - 4, n0 = n, TTE_A = 70, TTE_P = TTE_A,
   d$E40 <- ifelse(d$PCHG <= -40, 1, 0)
   d$E50 <- ifelse(d$PCHG <= -50, 1, 0)
   d$E57 <- ifelse(d$PCHG <= -57, 1, 0)
-  d$E15 <- ifelse(d$AVAL <= 15, 1, 0)
+  d$E15 <- ifelse(d$AVAL < 10, 1, 0)
   sustained <- function(dat, x){
     dat <- as.data.frame(dat)
     dat <- dat[order(dat$ADAY), ]

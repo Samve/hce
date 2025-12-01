@@ -9,7 +9,7 @@ simKHCE(
   CM_A,
   CM_P = -4,
   n0 = n,
-  TTE_A = 70,
+  TTE_A = 1000,
   TTE_P = TTE_A,
   fixedfy = 2,
   Emin = 20,
@@ -17,7 +17,7 @@ simKHCE(
   sigma = NULL,
   Sigma = 3,
   m = 10,
-  theta = -0.354,
+  theta = -0.4605,
   phi = 0,
   two_meas = c("no", "base", "postbase", "both")
 )
@@ -58,13 +58,6 @@ a list containing the dataset \code{GFR} for longitudinal measurements of
 eGFR and the competing KFRT events, the dataset \code{ADET} for the time-to-event
 kidney outcomes (sustained declines or sustained low levels of eGFR),
 and the combined \code{HCE} dataset for the kidney hierarchical composite endpoint.
-
-When \code{phi = 0}, the treatment effect is fully additive - the same average treatment effect
-applies to all patients, regardless of their baseline disease progression rate (\code{CM_P}).
-When \code{phi = 1}, the treatment effect is fully proportional - there is no additive component
-(the value of \code{CM_A} is irrelevant).
-The more relativistic intermediate treatment effect (half proportional and half additive)
-can be obtained by setting \verb{phi = abs(CM_A - CM_P)/(2*abs(CM_P)).}
 }
 \description{
 Simulate a kidney disease \code{hce} dataset, capturing eGFR (Estimated Glomerular Filtration Rate) progression over time, along with
@@ -75,14 +68,29 @@ The default setting is \code{TTE_A = TTE_P} because, conditional on eGFR level,
 the treatment effect does not influence the event rate of KFRT. In this model,
 the effect of treatment on KFRT operates entirely through its impact on eGFR decline.
 
-The parameters \code{TTE_A} and \code{theta} are chosen so that when GFR is 12, the event rate
+The parameters \code{TTE_A} and \code{theta} are chosen so that when GFR is 15, the event rate
 is 1 per patient per year, and when GFR is 25, the event rate is 0.01 per patient per year. These
 parameter values are obtained by solving the equation \code{rate0*exp(GFR*theta) = rate} for \code{rate0}
-and \code{theta}.
+and \code{theta}. When the observed eGFR is above 30, the event rate is set to a very low value (0.001),
+while when the observed eGFR is below 10, the event rate is set to a very high value (10000). This ensures that patients with observed low eGFR values
+always experience KFRT, while those with high eGFR values do not.
 
 By default, the standard deviation for within-patient variability, \code{sigma}, is set to \code{NULL.} When left as \code{NULL}, \code{sigma}
 is calculated as \verb{sqrt(0.67*predicted eGFR)}. This approach results in time-dependent variability for measurements,
 where lower predicted eGFR values lead to reduced variability.
+
+When \code{phi = 0}, the treatment effect is fully additive - the same average treatment effect
+applies to all patients, regardless of their baseline disease progression rate (\code{CM_P}).
+When \code{phi = 1}, the treatment effect is fully proportional - there is no additive component
+(the value of \code{CM_A} is irrelevant).
+The more relativistic intermediate treatment effect (half proportional and half additive)
+can be obtained by setting \verb{phi = abs(CM_A - CM_P)/(2*abs(CM_P)).}
+
+The kidney hierarchical composite endpoint is defined in the following order:
+(1) Kidney Failure Replacement Therapy (KFRT); (2) Sustained eGFR < 15 mL/min/1.73 m2;
+(3) Sustained ≥57\% decline in eGFR; (4) Sustained ≥50\% decline in eGFR; (5) Sustained ≥40\% decline in eGFR;
+and (6) Change in eGFR. In practice, because KFRT is frequently initiated when true eGFR is very low,
+sustained eGFR < 15 mL/min/1.73 m2 events are rarely observed.
 }
 \examples{
 # Example 1
