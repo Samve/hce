@@ -11,17 +11,18 @@
 #' @param shape0 shape parameter of the Weibull distribution for time-to-event outcomes in the placebo group. Default is 1 (exponential distribution).
 #' @param fixedfy length of follow-up.
 #' @param theta heterogeneity coefficient for the first event, modeled via a gamma distribution with mean 1; `theta` controls the variance. When `theta = 0`, there is no heterogeneity, which implies that death and hospitalization are independent.
+#' @param alpha0 exponential heterogeneity coefficient for modeling the heterogeneity of risk of death as the first event.
 #' @param alpha exponential heterogeneity coefficient for modeling the heterogeneity of risk of death after hospitalization; the heterogeneity of the second event is the inverse of the time of the first event.
 #' @param rHR recurrence hazard ratio comparing the active group to the control group for the second event, based on gap time measured from the first event.
 #' @details
 #' The default setting assumes `TTE_A = TTE_P`. Both `TTE_A` and `TTE_P` must be numeric vectors of length two, corresponding to the event rates 
 #' (Weibull distribution) for the first event of hospitalization and death. The parameters `shape` and `shape0` identify the shape parameters 
 #' of Weibull distributions for the first event, simulated from a distribution with a cumulative hazard of `rate × gamma × t^shape` for 
-#' hospitalization and `gamma^alpha × rate × t^shape` for death, where `gamma` is a patient-specific frailty drawn from a gamma distribution with mean 1 and 
+#' hospitalization and `gamma^alpha0 × rate × t^shape` for death, where `gamma` is a patient-specific frailty drawn from a gamma distribution with mean 1 and 
 #' variance `theta`, shared between death and hospitalization for a given patient. The parameter `theta` represents population heterogeneity and also induces 
-#' correlation between death and hospitalization as competing first events. The parameter `alpha` controls the heterogeneity of time to death through its 
+#' correlation between death and hospitalization as competing first events. The parameter `alpha0` controls the heterogeneity of time to death through its 
 #' effect on heterogeneity. Death after hospitalization is simulated from an exponential distribution with a constant hazard that depends on the timing `t1` 
-#' of the first event (hospitalization) as `(average provided first-event rate) × (t1 × gamma / fixedfy)^alpha` for the placebo arm and `(average provided first-event rate) × rHR × (t1 × gamma / fixedfy)^alpha` for the active arm where `rHR` is the recurrence
+#' of the first event (hospitalization) as `(average provided first-event rate) × (t1  / fixedfy)^alpha × gamma^alpha0` for the placebo arm and `(average provided first-event rate) × rHR × (t1  / fixedfy)^alpha × gamma^alpha0` for the active arm where `rHR` is the recurrence
 #' hazard ratio. When `alpha < 0`, earlier hospitalization (smaller `t1`) 
 #' increases the risk of death following hospitalization.
 #' @return an object of class `hce`.
@@ -30,11 +31,11 @@
 #' @seealso [hce::simHCE()] for a general `hce` dataset simulation, and [hce::simKHCE()] for kidney disease-specific `hce` simulation.
 #' @examples
 #' ## Example - positive correlation
-#' i <- 1763167944
+#' i <- 1764002323
 #' set.seed(i)
 #' PADY <- 2
 #' D <- simTTE(n = 1000, TTE_A = c(0.1, 0.04), 
-#' TTE_P = c(.15, 0.045), theta = 2, alpha = 2, shape = 2, 
+#' TTE_P = c(.15, 0.045), theta = 4, alpha0 = 2, alpha = -1, shape = 2, 
 #' fixedfy = PADY, rHR = 1)
 #' ####### Summary of first events by treatment group ########
 #' table(D$EVENT1, D$TRTP)
@@ -49,7 +50,7 @@
 #' grid()
 #'
 simTTE <- function (n, n0 = n, TTE_A, TTE_P = TTE_A, shape = 1, shape0 = shape,
-                    fixedfy = 2, theta = 1, alpha = 1, rHR = 1)
+                    fixedfy = 2, theta = 1, alpha0 = 1, alpha = 1, rHR = 1)
 {
   # Normalize scalar inputs (in case vectors are passed)
   n       <- n[1]
@@ -58,6 +59,7 @@ simTTE <- function (n, n0 = n, TTE_A, TTE_P = TTE_A, shape = 1, shape0 = shape,
   theta   <- theta[1]
   shape   <- shape[1]
   shape0  <- shape0[1]
+  alpha0   <- alpha0[1]
   alpha   <- alpha[1]
   
   # Input validation with informative messages
@@ -103,11 +105,11 @@ simTTE <- function (n, n0 = n, TTE_A, TTE_P = TTE_A, shape = 1, shape0 = shape,
   X0 <- (-log(U0) * scale_P[1] / gm0)^(1 / shape0)  # Arm P HOSP time
   
   # Simulate competing event: Death (DEATH)
-  # Frailty enters as gm^alpha for death
+  # Frailty enters as gm^alpha0 for death
   U  <- stats::runif(n)
   U0 <- stats::runif(n0)
-  Y  <- (-log(U)  * scale_A[2] / gm^alpha )^(1 / shape)    # Arm A DEATH time
-  Y0 <- (-log(U0) * scale_P[2] / gm0^alpha)^(1 / shape0)   # Arm P DEATH time
+  Y  <- (-log(U)  * scale_A[2] / gm^alpha0 )^(1 / shape)    # Arm A DEATH time
+  Y0 <- (-log(U0) * scale_P[2] / gm0^alpha0)^(1 / shape0)   # Arm P DEATH time
   
   # Store raw event times
   d$DEATH <- c(Y,  Y0)
@@ -135,7 +137,7 @@ simTTE <- function (n, n0 = n, TTE_A, TTE_P = TTE_A, shape = 1, shape0 = shape,
     # Use a baseline rate similar to original behaviour: mean of the first-event rates (inverse of scales)
     baseline_rate <- mean(c(1 / scale_A[1], 1 / scale_P[1]))
     
-    rate3 <- baseline_rate * (d0$AVAL1/fixedfy * d0$FRAILTY)^alpha 
+    rate3 <- baseline_rate * (d0$AVAL1/fixedfy )^alpha * d0$FRAILTY^alpha0
     scale3 <- 1 /ifelse(d0$TRTP == "A", rHR*rate3, rate3)
     
     # Use exponential distribution (Weibull shape = 1) for time from HOSP to DEATH2
