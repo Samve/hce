@@ -135,7 +135,7 @@ simKHCE <- function(n, CM_A, CM_P = - 4, n0 = n, TTE_A = 70, TTE_P = TTE_A,
   d3$RATE <- d3$RATE0*exp(c2*(d3$SLOPE*d3$ADAY + d3$BASE0))
   ## Make sure that patients with higher than 30 observed eGFR cannot have KFRT
   ## Make surer that patients with lower than 5 observed eGFR always have KFRT
-  d3$RATE <- ifelse(d3$AVAL > 30, 0.001, ifelse(d3$AVAL < 5, 10000, d3$RATE))
+  d3$RATE <- ifelse(d3$AVAL > 30, 0.001, ifelse(d3$AVAL < 8, 10000, d3$RATE))
   ## Simulate uniform random variables
   d3$U <- stats::runif(nrow(d3))
   ## Calculate the cumulative event rate for each patient

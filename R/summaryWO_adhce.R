@@ -45,14 +45,14 @@ summaryWO.adhce <- function(x, ...){
   r0 <- summaryWO.data.frame(x = x, AVAL = "AVAL", TRTP = "TRTP", ref = ref, GROUP = "GROUP")
   r1_ <- r0$summary_by_GROUP
   # Check that when some GROUPS levels are not present, they are added as zeros
-  rx <- expand.grid(TRTP = unique(x$TRTP), GROUP = levels(x$GROUP))
+  rx <- expand.grid(TRTP = c("A", "P"), GROUP = levels(x$GROUP))
   r1 <- merge(rx, r1_, by = c("TRTP", "GROUP"), all.x = TRUE)
   r1[is.na(r1)] <- 0
   ###########
   r2 <- tapply(r1$LOSS, r1$TRTP, cumsum)
   TOTAL <- r0$summary$TOTAL[1]
   GROUP <- levels(x$GROUP)
-  LAB <- c(paste(ref, "wins"), paste(unique(x$TRTP)[unique(x$TRTP) != ref], "wins"), "Ties")
+  LAB <- c(paste(unique(x$TRTP)[unique(x$TRTP) != ref], "wins"), paste(ref, "wins"), "Ties")
   r3 <- data.frame(GROUPN = rep(1:length(GROUP), GROUP = rep(GROUP, times = 3), times = 3), 
                    WINS = rep(LAB, each = length(GROUP)),
                    COUNT = c(r2$P, r2$A, TOTAL - r2$A - r2$P), TOTAL = TOTAL)
