@@ -18,6 +18,9 @@
 #' * WR2 a data frame containing the win ratio and its confidence interval, using the standard error calculated using `Pties`. 
 #' * gamma a data frame containing Goodman Kruskal's `gamma` and its confidence interval. 
 #' * SE a data frame containing standard errors used to calculated the Confidence intervals for win statistics. 
+#' 
+#' When `SE_WP_Type = "unbiased"`, the `WP`, `WO` and `NetBenefit` estimators use the unbiased variance estimator of `WP`. Additionally, a Wilson-type range-preserving confidence intevral is provided: 
+#' * WP_W a data frame containing the win probability and its range-preserving confidence interval. 
 #' @export
 #' @md
 #' @seealso [hce::calcWINS()], [hce::calcWINS.hce()], [hce::calcWINS.formula()].
@@ -40,9 +43,13 @@
 #' \cr \cr Brown MB, Benedetti JK. (1977) "Sampling Behavior of Tests for Correlation in Two-Way Contingency Tables." Journal of the American Statistical Association 72, 309-315. <doi:10.1080/01621459.1977.10480995>.
 #' \cr \cr Goodman LA, Kruskal WH. (1954) "Measures of association for cross classifications." Journal of the American Statistical Association 49, 732-764. <doi:10.1080/01621459.1954.10501231>.
 #' \cr \cr Goodman LA, Kruskal WH. (1963) "Measures of association for cross classifications III: Approximate sampling theory." Journal of the American Statistical Association 58, 310-364. <doi:10.1080/01621459.1963.10500850>.
+#' * Unbiased variance estimator for `WP` and Wilson-type range -preserving confidence intervals are based on:
+#' \cr \cr Brunner E, Konietschke F. (2025) "An unbiased rank-based estimator of the Mann–Whitney variance including the case of ties." Statistical Papers 66.1: 20. <doi:10.1007/s00362-024-01635-0>.
+#' \cr \cr Schüürhuis S, Konietschke F, Brunner E. (2025) "A New Approach to the Nonparametric Behrens–Fisher Problem With Compatible Confidence Intervals." Biometrical Journal 67.6. <doi:10.1002/bimj.70096>.
 #' @examples
 #' # Example 1 - Simple use
 #' calcWINS(x = COVID19b, AVAL = "GROUP", TRTP = "TRTP", ref = "Placebo")
+#' calcWINS(x = COVID19b, AVAL = "GROUP", TRTP = "TRTP", ref = "Placebo", SE_WP_Type = "unbiased")
 #' # Example 2 - Different variance estimators  
 #' FREQ <- c(16, 5, 0, 1, 0, 4, 1, 5, 7, 2)
 #' dat0 <- data.frame(AVAL = rep(5:1, 2), TRTP = rep(c('A', 'P'), each = 5))
@@ -130,37 +137,71 @@ calcWINS.data.frame <- function(x, AVAL, TRTP, ref, alpha = 0.05, WOnull = 1, SE
   P1 <- 2 * (1 - stats::pnorm(threshold1))
   threshold2 <- base::abs(log(WR) - log(WOnull))/logWR_SE2
   P2 <- 2 * (1 - stats::pnorm(threshold2))
-  
-  if(SE_WP_Type == "unbiased"){
-    nA <- sum(res2$N[res2$TRTP=="A"])
-    nP <- sum(res2$N[res2$TRTP=="P"])
-    K <- nA*nP/((nA - 1) * (nP - 1)) 
-    BBK <- K*(res0$SE_WP^2 - (res0[, "WP"]*(1 - res0[, "WP"]) - 0.25*Pties)/(nA*nP))
+  if (SE_WP_Type == "unbiased") {
+    WP <- res0[, "WP"]
+    WO <- WP/(1 - WP)
+    nA <- sum(res2$N[res2$TRTP == "A"])
+    nP <- sum(res2$N[res2$TRTP == "P"])
+    K <- nA * nP/((nA - 1) * (nP - 1))
+    BBK <- K * (res0$SE_WP^2 - (WP * (1 - WP) - 0.25 * Pties)/(nA * nP))
     SE_WP <- sqrt(BBK)
-    threshold_WP <- base::abs(res0[, "WP"] - WPnull)/SE_WP
+    threshold_WP <- base::abs(WP - WPnull)/SE_WP
     P_WP <- 2 * (1 - stats::pnorm(threshold_WP))
-  } else {
+    SE <- SE_WP/(WP * (1 - WP))
+    LCL <- WO * base::exp(-Ca * SE)
+    UCL <- WO * base::exp(Ca * SE)
+  }
+  else {
     SE_WP <- res0[, "SE_WP"]
-    threshold_WP <- base::abs(res0[, "WP"] - WPnull)/SE_WP
-    P_WP <- 2 * (1 - stats::pnorm(threshold_WP))
+    P_WP <- res0[, "Pvalue"]
   }
   out <- list()
   out$summary <- data.frame(WIN = P/2, LOSS = Q/2, TIE = Res$summary$TIE[1], 
                             TOTAL = Res$summary$TOTAL[1], Pties = Pties)
-  out$WP <- data.frame(WP = res0[, "WP"], LCL = res0[, "WP"] - Ca * SE_WP, UCL = res0[, "WP"] + Ca * SE_WP, Pvalue = P_WP)
-  out$NetBenefit <- data.frame(NetBenefit = 2 * res0[, "WP"] - 1, 
-                               LCL = 2 * (res0[, "WP"] - Ca * SE_WP) - 1, 
-                               UCL = 2 * (res0[, "WP"] + Ca * SE_WP) - 1, Pvalue = P_WP)
-  out$WO <- res0[, c("WO", "LCL", "UCL", "Pvalue")]
+  out$WP <- data.frame(WP = res0[, "WP"], LCL = res0[, "WP"] - 
+                         Ca * SE_WP, UCL = res0[, "WP"] + Ca * SE_WP, Pvalue = P_WP)
+  out$NetBenefit <- data.frame(NetBenefit = 2 * res0[, "WP"] - 
+                                 1, LCL = 2 * (res0[, "WP"] - Ca * SE_WP) - 1, UCL = 2 * 
+                                 (res0[, "WP"] + Ca * SE_WP) - 1, Pvalue = P_WP)
+  
+  if(SE_WP_Type == "unbiased"){
+    out$WO <- data.frame(WO = WO, LCL = LCL, 
+                         UCL = UCL, Pvalue =  P_WP)
+  } else {
+    out$WO <- res0[, c("WO", "LCL", "UCL", "Pvalue")]  
+  }
+  
   out$WR1 <- data.frame(WR = WR, LCL1 = WR * exp(-Ca * logWR_SE1), 
                         UCL1 = WR * exp(Ca * logWR_SE1), Pvalue1 = P1)
   out$WR2 <- data.frame(WR = WR, LCL2 = WR * exp(-Ca * logWR_SE2), 
                         UCL2 = WR * exp(Ca * logWR_SE2), Pvalue2 = P2)
   out$gamma <- data.frame(gamma = gamma, LCL = gamma - Ca * 
                             gamma_SE, UCL = gamma + Ca * gamma_SE, Pvalue = P0)
-  out$SE <- data.frame(WP_SE = SE_WP, NetBenefit_SE = 2 * 
-                         SE_WP, logWR_SE1 = logWR_SE1, logWR_SE2 = logWR_SE2, 
-                       gamma_SE = gamma_SE)
+  out$SE <- data.frame(WP_SE = SE_WP, NetBenefit_SE = 2 * SE_WP, 
+                       logWR_SE1 = logWR_SE1, logWR_SE2 = logWR_SE2, gamma_SE = gamma_SE)
+  ### New addition to cover Wilson-type confidence interval
+  if (SE_WP_Type == "unbiased"){
+    m <- min(nA, nP)
+    Ca2 <- Ca^2
+    if(WP > 0.01 & WP < 0.99){
+      q <- SE_WP^2/(WP * (1 - WP))
+      Diff <- sqrt(q^2*Ca2^2 + 4*q*WP*(1 - WP)*Ca2)
+      LCL <- 1/(2*(1 + q*Ca^2))*(2*WP + q*Ca^2 - Diff)
+      UCL <- 1/(2*(1 + q*Ca^2))*(2*WP + q*Ca^2 + Diff)
+      threshold_WP <- base::abs(WP - WPnull)/sqrt(q*WPnull*(1 - WPnull))
+    } else if (WP >= 0.99){
+      LCL <- m/(m + Ca2)
+      UCL <- 1
+      threshold_WP <-  sqrt(m)
+    } else {
+      LCL <- 0
+      UCL <- Ca2/(m + Ca2)
+      threshold_WP <- sqrt(m)
+    }
+    P_WP <- 2 * (1 - stats::pnorm(threshold_WP))
+    out$WP_W <- data.frame(WP = WP, LCL = LCL, UCL = UCL, Pvalue = P_WP)
+  }
+  
   return(out)
 }
 
