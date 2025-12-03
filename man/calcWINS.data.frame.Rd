@@ -45,16 +45,18 @@ a list containing win statistics and their confidence intervals. It contains the
 \item SE a data frame containing standard errors used to calculated the Confidence intervals for win statistics.
 }
 
-When \code{SE_WP_Type = "unbiased"}, the \code{WP}, \code{WO} and \code{NetBenefit} estimators use the unbiased variance estimator of \code{WP}. Additionally, a Wilson-type range-preserving confidence intevral is provided:
+When \code{SE_WP_Type = "unbiased"}, the \code{WP}, \code{WO} and \code{NetBenefit} estimators use the unbiased variance estimator of \code{WP}. Additionally, a Wilson-type range-preserving confidence interval is provided:
 \itemize{
 \item WP_W a data frame containing the win probability and its range-preserving confidence interval.
+\item NetBenefit_W a data frame containing the net benefit and its range-preserving confidence interval.
+\item WO_W a data frame containing the win odds and its range-preserving confidence interval.
 }
 }
 \description{
 Win statistics calculation using a data frame
 }
 \details{
-When \code{SE_WP_Type = "unbiased"}, the calculations for win proportion, net benefit, and win odds utilize the unbiased standard error from Brunner-Konietschke (2025) paper which is a reformulation of the original formula proposed by Bamber (1975).
+When \code{SE_WP_Type = "unbiased"}, the calculations for win proportion, net benefit, and win odds utilize the unbiased standard error from Brunner-Konietschke (2025) paper which is a reformulation of the original formula proposed by Bamber (1975). In this case, Wilson-type confidence intervals are calculated for the win probability, net benefit, and win odds, following the approach proposed by Schüürhuis, Konietschke, and Brunner (2025).
 }
 \examples{
 # Example 1 - Simple use
@@ -80,8 +82,9 @@ VAR <- tapply(dat1$AVAL_, dat1$TRTP, var)
 N <- tapply(dat1$AVAL_, dat1$TRTP, length)
 SE <- sqrt(sum(VAR/N))
 c(WP = WP[[1]], SE = SE)
-# Example 3 - Simulations: Biased vs unbiased
-n0 <- 5; n1 <- 7; p0 <- 0.2; p1 <- 0.5; x <- 1:20; delta <- 0.5
+# Example 3 - Simulations: Biased vs unbiased vs Wilson confidence intervals for Win Probability
+set.seed(1)
+n0 <- 5; n1 <- 7; p0 <- 0.2; p1 <- 0.5; x <- 1:20; delta <- 0.15
 WP0 <- (p1 - p0)/2 + 0.5
 DAT <- NULL
 for(i in x){
@@ -89,21 +92,33 @@ for(i in x){
   TRTP = c(rep("A", n1), rep("P", n0)))
   CL1 <- calcWINS(x = dat, AVAL = "AVAL", TRTP = "TRTP", ref = "P")$WP
   CL1$Type <- "biased"
-  CL2 <- calcWINS(x = dat, AVAL = "AVAL", TRTP = "TRTP", 
-                  ref = "P", SE_WP_Type = "unbiased")$WP
+  fit <- calcWINS(x = dat, AVAL = "AVAL", TRTP = "TRTP", 
+                ref = "P", SE_WP_Type = "unbiased")
+  CL2 <- fit$WP
   CL2$Type <- "unbiased"
-  DAT <- rbind(DAT, CL1, CL2)
-}
+  CL3 <- fit$WP_W
+  CL3$Type <- "Wilson"
+  DAT <- rbind(DAT, CL1, CL2, CL3)
+  }
 WP <- DAT$WP[DAT$Type == "unbiased"]
-plot(x, WP, pch = 19, xlab = "Simulations", ylab = "Win Probability", ylim = c(0., 1.1))
+plot(x, WP, pch = 19, xlab = "Simulations", ylab = "Win Probability", 
+            ylim = c(0., 1.1), xlim = c(0, max(x) + 1))
 points(x + delta, WP, pch = 19)
+points(x + 2*delta, WP, pch = 19)
 arrows(x, DAT$LCL[DAT$Type == "unbiased"], 
        x, DAT$UCL[DAT$Type == "unbiased"], angle = 90, code = 3, length = 0.05, "green")
-arrows(x + delta, DAT$LCL[DAT$Type == "biased"], 
-       x + delta, DAT$UCL[DAT$Type == "biased"], angle = 90, code = 3, length = 0.05, col = "red")
-abline(h = c(WP0, 1), col = "blue", lty = 3)
-legend("bottomleft", legend = c("True WP", "Biased", "Unbiased"), 
-                    col = c(4, 2, 3), lty = c(3, 1, 1 ), cex = 0.75)
+       arrows(x + delta, DAT$LCL[DAT$Type == "biased"], 
+       x + delta, DAT$UCL[DAT$Type == "biased"], angle = 90, code = 3, 
+       length = 0.05, col = "orange")
+arrows(x + 2*delta, DAT$LCL[DAT$Type == "Wilson"], 
+       x + 2*delta, DAT$UCL[DAT$Type == "Wilson"], angle = 90, code = 3, 
+       length = 0.05, col = "blue")
+abline(h = c(WP0, 1), col = c("darkgreen", "darkred"), lty = c(3, 4))
+legend("bottomleft", legend = c("True WP", "UnBiased", "Biased", "Wilson", "Null"), 
+       col = c("darkgreen", "green", "orange", "blue", "darkred"), 
+       lty = c(3, 1, 1, 1, 4), cex = 0.75, ncol = 3)
+       title("Win Probability: Biased vs Unbiased vs Wilson CI")
+# End of Example 3
 }
 \references{
 The theory of win statistics is covered in the following papers:
