@@ -22,7 +22,7 @@
 #' variance `theta`, shared between death and hospitalization for a given patient. The parameter `theta` represents population heterogeneity and also induces 
 #' correlation between death and hospitalization as competing first events. The parameter `alpha0` controls the heterogeneity of time to death through its 
 #' effect on heterogeneity. Death after hospitalization is simulated from an exponential distribution with a constant hazard that depends on the timing `t1` 
-#' of the first event (hospitalization) as `(average provided first-event rate) × (t1  / fixedfy)^alpha × gamma^alpha0` for the placebo arm and `(average provided first-event rate) × rHR × (t1  / fixedfy)^alpha × gamma^alpha0` for the active arm where `rHR` is the recurrence
+#' of the first event (hospitalization) as `(average provided first-death rate) × (t1  / fixedfy)^alpha × gamma^alpha0` for the placebo arm and `(average provided first-death rate) × rHR × (t1  / fixedfy)^alpha × gamma^alpha0` for the active arm where `rHR` is the recurrence
 #' hazard ratio. When `alpha < 0`, earlier hospitalization (smaller `t1`) 
 #' increases the risk of death following hospitalization.
 #' @return an object of class `hce`.
@@ -135,7 +135,7 @@ simTTE <- function (n, n0 = n, TTE_A, TTE_P = TTE_A, shape = 1, shape0 = shape,
     #   rate_i = baseline_rate * (fixedfy / AVAL1_i)^alpha * FRAILTY_i
     # Convert rate to scale (scale = 1 / rate_i) for exponential parameterization.
     # Use a baseline rate similar to original behaviour: mean of the first-event rates (inverse of scales)
-    baseline_rate <- mean(c(1 / scale_A[1], 1 / scale_P[1]))
+    baseline_rate <- mean(c(1 / scale_A[2], 1 / scale_P[2]))
     
     rate3 <- baseline_rate * (d0$AVAL1/fixedfy )^alpha * d0$FRAILTY^alpha0
     scale3 <- 1 /ifelse(d0$TRTP == "A", rHR*rate3, rate3)
