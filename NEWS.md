@@ -1,4 +1,4 @@
-# hce 0.8.7
+# hce 0.8.8
 
 ### Bugs
 
@@ -9,14 +9,14 @@
 ### Updates
 
 * The default value for within-patient variability (`sigma`) in the `simKHCE()` function has been updated. It now depends on the time-dependent predicted eGFR, hence lower eGFR values result in lower variability. 
-*The kidney failure event logic in `simKHCE()` has been revised to prevent events when the most recent eGFR is sufficiently high and to trigger events when the most recent eGFR is below the threshold.
+* The kidney failure event logic in `simKHCE()` has been revised to prevent events when the most recent eGFR is sufficiently high and to trigger events when the most recent eGFR is below the threshold.
 
 ### New
 
 * A new argument, `two_meas`, has been added to the `simKHCE()` function to enable duplicate eGFR measurements at baseline and/or at the end of follow-up. This implementation was suggested by Amy Shi.
 * The `summaryWO.adhce()` results now include cumulative wins by component.
 * A new function, `simTTE()`, simulates an `hce` dataset with two correlated outcomes under an *illness-death* model. It allows population heterogeneity in the first event (which also determines correlation among first events), while the risk of the second event depends on the timing of the first event in the same way across treatment groups. 
-
+* Added an implementation of `calcWINS()` for cases where `SE_WP_Type = TRUE`, providing *Wilson-type* confidence intervals for the win probability, net benefit, and win odds, following the approach of Schüürhuis, Konietschke, and Brunner (2025).
 
 ### Documentation
 

@@ -46,7 +46,7 @@
 #' \cr \cr Goodman LA, Kruskal WH. (1954) "Measures of association for cross classifications." Journal of the American Statistical Association 49, 732-764. <doi:10.1080/01621459.1954.10501231>.
 #' \cr \cr Goodman LA, Kruskal WH. (1963) "Measures of association for cross classifications III: Approximate sampling theory." Journal of the American Statistical Association 58, 310-364. <doi:10.1080/01621459.1963.10500850>.
 #' * Unbiased variance estimator for `WP` and Wilson-type range -preserving confidence intervals are based on:
-#' \cr \cr Brunner E, Konietschke F. (2025) "An unbiased rank-based estimator of the Mann–Whitney variance including the case of ties." Statistical Papers 66.1: 20. <doi:10.1007/s00362-024-01635-0>.
+#' \cr \cr Brunner E, Konietschke F. (2025) "An unbiased rank-based estimator of the Mann–Whitney variance including the case of ties." Statistical Papers 66: 20. <doi:10.1007/s00362-024-01635-0>.
 #' \cr \cr Schüürhuis S, Konietschke F, Brunner E. (2025) "A New Approach to the Nonparametric Behrens–Fisher Problem With Compatible Confidence Intervals." Biometrical Journal 67.6. <doi:10.1002/bimj.70096>.
 #' @examples
 #' # Example 1 - Simple use
@@ -110,6 +110,7 @@
 #'        title("Win Probability: Biased vs Unbiased vs Wilson CI")
 #' # End of Example 3
 calcWINS.data.frame <- function(x, AVAL, TRTP, ref, alpha = 0.05, WOnull = 1, SE_WP_Type = c("biased", "unbiased"), ...){
+  #The function relies on calcWO() for the win odds calculation, and summaryWO() for the win counts by group.
   SE_WP_Type <- match.arg(SE_WP_Type)
   data <- as.data.frame(x)
   alpha <- alpha[1]
@@ -117,12 +118,16 @@ calcWINS.data.frame <- function(x, AVAL, TRTP, ref, alpha = 0.05, WOnull = 1, SE
   WOnull <- WOnull[1]
   WPnull <- WOnull/(WOnull + 1)
   gammanull <- (WOnull - 1)/(WOnull + 1)
-  data$AVAL <- data[, base::names(data) == AVAL]
-  data$TRTP <- data[, base::names(data) == TRTP]
+  data$AVAL <- data[[AVAL]]
+  data$TRTP <- data[[TRTP]]
   if (length(unique(data$TRTP)) != 2) 
     stop("The dataset should contain two treatment groups.")
   if (!ref %in% unique(data$TRTP)) 
     stop("Choose the reference from the values in TRTP.")
+   stopifnot("The significance level `alpha` should be between 0 and 1." 
+            = all(alpha > 0 & alpha < 1))
+   stopifnot("The null hypothesis for the win odds should be positive." 
+             = WOnull > 0)
   data$TRTP <- base::ifelse(data$TRTP == ref, "P", "A")
   res0 <- calcWO(x = data, AVAL = "AVAL", TRTP = "TRTP", ref = "P", 
                  alpha = alpha, WOnull = WOnull)

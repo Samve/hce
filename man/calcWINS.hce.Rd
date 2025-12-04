@@ -66,7 +66,7 @@ The theory of win statistics is covered in the following papers:
 \cr \cr Goodman LA, Kruskal WH. (1954) "Measures of association for cross classifications." Journal of the American Statistical Association 49, 732-764. \url{doi:10.1080/01621459.1954.10501231}.
 \cr \cr Goodman LA, Kruskal WH. (1963) "Measures of association for cross classifications III: Approximate sampling theory." Journal of the American Statistical Association 58, 310-364. \url{doi:10.1080/01621459.1963.10500850}.
 \item Unbiased variance estimator for \code{WP} and Wilson-type range -preserving confidence intervals are based on:
-\cr \cr Brunner E, Konietschke F. (2025) "An unbiased rank-based estimator of the Mann–Whitney variance including the case of ties." Statistical Papers 66.1: 20. \url{doi:10.1007/s00362-024-01635-0}.
+\cr \cr Brunner E, Konietschke F. (2025) "An unbiased rank-based estimator of the Mann–Whitney variance including the case of ties." Statistical Papers 66: 20. \url{doi:10.1007/s00362-024-01635-0}.
 \cr \cr Schüürhuis S, Konietschke F, Brunner E. (2025) "A New Approach to the Nonparametric Behrens–Fisher Problem With Compatible Confidence Intervals." Biometrical Journal 67.6. \url{doi:10.1002/bimj.70096}.
 }
 }
