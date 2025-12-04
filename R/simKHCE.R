@@ -42,10 +42,10 @@
 #' can be obtained by setting `phi = abs(CM_A - CM_P)/(2*abs(CM_P)).`
 #' 
 #' The kidney hierarchical composite endpoint is defined in the following order: 
-#' (1) Kidney Failure Replacement Therapy (KFRT); (2) Sustained eGFR < 15 mL/min/1.73 m2; 
-#' (3) Sustained >=57% decline in eGFR; (4) Sustained >=50% decline in eGFR; (5) Sustained >=40% decline in eGFR; 
+#' (1) Kidney Failure Replacement Therapy (KFRT); (2) Sustained eGFR < 15; 
+#' (3) Sustained 57 percent or more decline in eGFR; (4) Sustained 50 percent or more  decline in eGFR; (5) Sustained 40 percent or more decline in eGFR; 
 #' and (6) Change in eGFR. In practice, because KFRT is frequently initiated when true eGFR is very low, 
-#' sustained eGFR < 15 mL/min/1.73 m2 events are rarely observed.
+#' sustained eGFR < 15 events are rarely observed.
 #' @return a list containing the dataset `GFR` for longitudinal measurements of 
 #' eGFR and the competing KFRT events, the dataset `ADET` for the time-to-event 
 #' kidney outcomes (sustained declines or sustained low levels of eGFR), 
