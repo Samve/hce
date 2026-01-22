@@ -56,7 +56,7 @@ hospitalization and \verb{gamma^alpha0 × rate × t^shape} for death, where \cod
 variance \code{theta}, shared between death and hospitalization for a given patient. The parameter \code{theta} represents population heterogeneity and also induces
 correlation between death and hospitalization as competing first events. The parameter \code{alpha0} controls the heterogeneity of time to death through its
 effect on heterogeneity. Death after hospitalization is simulated from an exponential distribution with a constant hazard that depends on the timing \code{t1}
-of the first event (hospitalization) as \verb{(average provided first-death rate) × (t1  / fixedfy)^alpha × gamma^alpha0} for the placebo arm and \verb{(average provided first-death rate) × rHR × (t1  / fixedfy)^alpha × gamma^alpha0} for the active arm where \code{rHR} is the recurrence
+of the first event (hospitalization) as \verb{(TTE_A[2] + TTE_P[2])/2 × (t1  / fixedfy)^alpha × gamma^alpha0} for the placebo arm and \verb{(TTE_A[2] + TTE_P[2])/2 × rHR × (t1  / fixedfy)^alpha × gamma^alpha0} for the active arm where \code{rHR} is the recurrence
 hazard ratio. When \code{alpha < 0}, earlier hospitalization (smaller \code{t1})
 increases the risk of death following hospitalization.
 }
