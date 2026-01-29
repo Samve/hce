@@ -2,7 +2,7 @@
 % Please edit documentation in R/simTTE.R
 \name{simTTE}
 \alias{simTTE}
-\title{Simulate an \code{hce} dataset with two correlated outcomes (illness - death model)}
+\title{Simulate an \code{adhce} dataset with two correlated outcomes (illness - death model)}
 \usage{
 simTTE(
   n,
@@ -15,7 +15,9 @@ simTTE(
   theta = 1,
   alpha0 = 1,
   alpha = 1,
-  rHR = 1
+  rHR = 1,
+  m = Inf,
+  hce_type = c("mi", "md")
 )
 }
 \arguments{
@@ -40,12 +42,16 @@ simTTE(
 \item{alpha}{exponential heterogeneity coefficient for modeling the heterogeneity of risk of death after hospitalization; the heterogeneity of the second event is the inverse of the time of the first event.}
 
 \item{rHR}{recurrence hazard ratio comparing the active group to the control group for the second event, based on gap time measured from the first event.}
+
+\item{m}{categorization number used for to discretize time to death and time to hospitalization. Defaults to \code{Inf} (no discretization).}
+
+\item{hce_type}{the type of the hierarchical composite endpoint: use \code{mi} for the most-important outcome or \code{md} for the move-down approach. This parameter only affects results when \code{m} is finite.}
 }
 \value{
-an object of class \code{hce}.
+an object of class \code{adhce}.
 }
 \description{
-Simulate an \code{hce} dataset with two correlated outcomes - death and hospitalization - from a heterogeneous population. The correlation between these outcomes arises from population heterogeneity. Models the risk of death following hospitalization as dependent on the timing
+Simulate an \code{adhce} dataset with two correlated outcomes - death and hospitalization - from a heterogeneous population. The correlation between these outcomes arises from population heterogeneity. Models the risk of death following hospitalization as dependent on the timing
 of the hospitalization, reflecting strong dependence between the times to the first and second events (i.e., event clustering).
 }
 \details{
@@ -59,9 +65,11 @@ effect on heterogeneity. Death after hospitalization is simulated from an expone
 of the first event (hospitalization) as \verb{(TTE_A[2] + TTE_P[2])/2 × (t1  / fixedfy)^alpha × gamma^alpha0} for the placebo arm and \verb{(TTE_A[2] + TTE_P[2])/2 × rHR × (t1  / fixedfy)^alpha × gamma^alpha0} for the active arm where \code{rHR} is the recurrence
 hazard ratio. When \code{alpha < 0}, earlier hospitalization (smaller \code{t1})
 increases the risk of death following hospitalization.
+
+By default, events are simulated in continuous time. When \code{m} is specified as a positive numeric value, the event times are discretized into \code{m} intervals over the follow-up period.
 }
 \examples{
-## Example - positive correlation
+## Example 1 - positive correlation
 i <- 1764002323
 set.seed(i)
 PADY <- 2
@@ -79,8 +87,27 @@ D$TRTP <- factor(D$TRTP, levels = c("P", "A"))
 plot(D, type = "l", col = 2, fill = TRUE)
 abline(a = 0, b = 1, lwd = 2, lty = 3, col = "darkgreen")
 grid()
+################################################################
+## Example 2 - Move-down approach (discrete‑time case only)
+PADY <- 2
+# Continuous-time
+set.seed(2)
+D <- simTTE(n = 1000, TTE_A = c(0.1, 0.04), 
+TTE_P = c(.15, 0.045), theta = 4, alpha0 = 2, alpha = -1, shape = 2, 
+fixedfy = PADY, rHR = 1, m = Inf)
+summaryWO(D, ref = "P")$summary_by_GROUP
+# Discrete-time (more-ties)
+D0 <- simTTE(n = 1000, TTE_A = c(0.1, 0.04), 
+TTE_P = c(.15, 0.045), theta = 4, alpha0 = 2, alpha = -1, shape = 2, 
+fixedfy = PADY, rHR = 1, m = 5)
+summaryWO(D0, ref = "P")$summary_by_GROUP
+# Discrete-time and move-down approach (less ties on death)
+D1 <- simTTE(n = 1000, TTE_A = c(0.1, 0.04), 
+TTE_P = c(.15, 0.045), theta = 4, alpha0 = 2, alpha = -1, shape = 2, 
+fixedfy = PADY, rHR = 1, m = 5, hce_type = "md")
+summaryWO(D1, ref = "P")$summary_by_GROUP
 
 }
 \seealso{
-\code{\link[=simHCE]{simHCE()}} for a general \code{hce} dataset simulation, and \code{\link[=simKHCE]{simKHCE()}} for kidney disease-specific \code{hce} simulation.
+\code{\link[=simHCE]{simHCE()}} for a general \code{adhce} dataset simulation, and \code{\link[=simKHCE]{simKHCE()}} for kidney disease-specific \code{adhce} simulation.
 }

@@ -1,3 +1,14 @@
+# hce 0.9.0
+
+### Updates
+
+* Added new arguments `m` and `hce_type` to `simTTE()` to enable simulation of discrete-time outcomes and creation of hierarchical composite endpoints using the *move-down* approach.
+
+### New
+
+* Introduced `deltaWO()`, which computes win odds based on a specified threshold for `adhce` objects.
+
+
 # hce 0.8.8
 
 ### Bugs
