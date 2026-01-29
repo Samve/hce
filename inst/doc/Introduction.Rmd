@@ -1,6 +1,6 @@
 ---
 title: "Introduction"
-date: "`r format(as.Date('2026-01-15'), '%d %B, %Y')`"
+date: "`r format(as.Date('2026-01-30'), '%d %B, %Y')`"
 author:
   - name: "Samvel B. Gasparyan"
     affiliation: https://gasparyan.co/

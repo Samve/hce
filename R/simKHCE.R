@@ -156,6 +156,8 @@ simKHCE <- function(n, CM_A, CM_P = - 4, n0 = n, TTE_A = 1000, TTE_P = TTE_A,
   ## Simulate uniform random variables
   d3$U <- stats::runif(nrow(d3))
   ## Calculate the cumulative event rate for each patient
+  ### CUMRATE must be aligned with the intended interval indexing per ID; otherwise, hazard accumulation can be wrong.
+  d3 <- d3[order(d3$ID, d3$ADAY), ]
   d3$CUMRATE <- stats::ave(d3$RATE, d3$ID, FUN = cumsum)
   d3$PADY <- fixedfy
   ## Cumulative event rate minus the event rate in the current interval gives the cumulative event rate up to the current interval
