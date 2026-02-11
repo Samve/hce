@@ -143,6 +143,8 @@ simKHCE <- function(n, CM_A, CM_P = - 4, n0 = n, TTE_A = 1000, TTE_P = TTE_A,
   # Extract time 0 measurements as baseline (observed baseline with sampling error)
   d2 <- d1[d1$ADAY == 0, c("ID", "AVAL")]
   names(d2) <- c("ID", "BASE")
+  ## Simulate uniform random variables (should be subject specific!)
+  d2$U <- stats::runif(nrow(d2))
   # Merge with the baseline variables (observed = BASE, true = BASE0)
   d3 <- merge(d1, d2, by = "ID", all.x = T)
   # Create patient-level KFRT incidence rates based on the true random slope
@@ -153,33 +155,30 @@ simKHCE <- function(n, CM_A, CM_P = - 4, n0 = n, TTE_A = 1000, TTE_P = TTE_A,
   ## Make sure that patients with higher than 30 observed eGFR cannot have KFRT
   ## Make surer that patients with lower than 5 observed eGFR always have KFRT
   d3$RATE <- ifelse(d3$AVAL > 30, 0.001, ifelse(d3$AVAL < 10, 10000, d3$RATE))
-  ## Simulate uniform random variables
-  d3$U <- stats::runif(nrow(d3))
   ## Calculate the cumulative event rate for each patient
   ### CUMRATE must be aligned with the intended interval indexing per ID; otherwise, hazard accumulation can be wrong.
   d3 <- d3[order(d3$ID, d3$ADAY), ]
-  d3$CUMRATE <- stats::ave(d3$RATE, d3$ID, FUN = cumsum)
   d3$PADY <- fixedfy
+  dt <- fixedfy/m
+  d3$CUMHAZ <- stats::ave(d3$RATE*dt, d3$ID, FUN = cumsum)
+  d3$V <- -log(d3$U)
+  d4 <- d3[d3$V <= d3$CUMHAZ, ] #selects the intervals in which events happen
   ## Cumulative event rate minus the event rate in the current interval gives the cumulative event rate up to the current interval
   ## Use the cumulative event rate up to the current interval multiplied by the length of all intervals
   ## Use the log uniform added to it and divided by the rate of the current interval
   ## Add it to the current visit ADAY to initiate the event after the current visit
-  
-  d3$AVALT0 <- (- log(d3$U) + (d3$PADY/m)*(d3$CUMRATE - d3$RATE))/d3$RATE + d3$ADAY
-  ## Compare the simulated event with the length of follow-up
-  d3$AVALT0 <- ifelse(d3$AVALT0 <= d3$PADY, 
-                      d3$AVALT0 ,
-                      d3$PADY + 1)
-  ## Keep only events happening in the given risk interval and before end of follow-up.
-  d4 <- d3[d3$AVALT0 <= d3$PADY, c("ID", "AVALT0")]
-  ## If there are events generated
   if(nrow(d4) > 0){
-    ## select first event of each patient
-    l <- lapply(split(d4, d4$ID), function(x) x[1, ])
-    d4 <- do.call(rbind, l)
-    ## Keep the event times
-    names(d4)[names(d4) == "AVALT0"] <- "AVALT"
-    d5 <- merge(d3, d4, all.x = TRUE, by = "ID")  
+    ## Order to correctly select the first event
+    d4 <- d4[order(d4$ID, d4$ADAY), ]
+    ## Select the first event
+    d4 <- d4[!duplicated(d4$ID), ] 
+    ## Generate the time of the first event
+    d4$AVALT <- (d4$V + (d4$CUMHAZ - d4$RATE*dt))/d4$RATE + d4$ADAY
+    ## d3$V <= d3$CUMHAZ selection above guarantees that d4$AVALT - d4$ADAY is less than dt
+    ## Hence, by construction the below should not be needed, but protects againts rounding issues.
+    d4$AVALT <- pmin(d4$AVALT, d4$PADY)
+    ##########################
+    d5 <- merge(d3, d4[, c("ID", "AVALT")], all.x = TRUE, by = "ID")
     ## if event time is missing, then assign censoring.
     d5$EVENT <- NA
     d5$EVENT <- ifelse(is.na(d5$AVALT), 0, 1)
@@ -202,7 +201,7 @@ simKHCE <- function(n, CM_A, CM_P = - 4, n0 = n, TTE_A = 1000, TTE_P = TTE_A,
   d$E40 <- ifelse(d$PCHG <= -40, 1, 0)
   d$E50 <- ifelse(d$PCHG <= -50, 1, 0)
   d$E57 <- ifelse(d$PCHG <= -57, 1, 0)
-  d$E15 <- ifelse(d$AVAL < 10, 1, 0)
+  d$E15 <- ifelse(d$AVAL < 15, 1, 0)
   sustained <- function(dat, x){
     dat <- as.data.frame(dat)
     dat <- dat[order(dat$ADAY), ]
@@ -296,7 +295,7 @@ simKHCE <- function(n, CM_A, CM_P = - 4, n0 = n, TTE_A = 1000, TTE_P = TTE_A,
   if(!is.null(ADET)) ADET <- ADET[order(ADET$ID), ]
   ###############
   ### Clean the final GFR dataset
-  ADLB[, c("U", "CUMRATE")] <- NULL
+  ADLB[, c("U", "CUMHAZ", "V")] <- NULL
   ######## Create the final list of results
   L <- list(GFR = ADLB, ADET = ADET, HCE = as_hce(HCE))
   return(L)
