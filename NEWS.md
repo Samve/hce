@@ -1,3 +1,20 @@
+
+# hce 0.9.0.2
+
+### Bugs
+
+* Fixed another bug in `simKHCE()` affecting the piecewise-constant kidney failure event generation with time-dependent predicted true eGFR. The uniform random variable for event time was previously sampled per visit (incorrect); it is now sampled once per subject. Event determination across inter‑visit intervals was adjusted to use cumulative hazard crossing with within‑interval interpolation.
+* Fixed a bug in `simTTE()` where some first death events were incorrectly classified as censored.
+
+### Updates
+
+### New
+
+### Documentation
+
+
+
+
 # hce 0.9.0
 
 ### Updates
