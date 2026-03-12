@@ -72,7 +72,7 @@ The parameters \code{TTE_A} and \code{theta} are chosen so that when GFR is 15, 
 is 1 per patient per year, and when GFR is 25, the event rate is 0.01 per patient per year. These
 parameter values are obtained by solving the equation \code{rate0*exp(GFR*theta) = rate} for \code{rate0}
 and \code{theta}. When the observed eGFR is above 30, the event rate is set to a very low value (10E-7),
-while when the observed eGFR is below 10, the event rate is set to a very high value (10E5). This ensures that patients with observed low eGFR values
+while when the observed eGFR is below or equal to 7, the event rate is set to a very high value (10E5). This ensures that patients with observed low eGFR values
 always experience KFRT, while those with high eGFR values do not.
 
 By default, the standard deviation for within-patient variability, \code{sigma}, is set to \code{NULL.} When left as \code{NULL}, \code{sigma}

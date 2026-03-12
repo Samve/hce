@@ -27,7 +27,7 @@
 #' is 1 per patient per year, and when GFR is 25, the event rate is 0.01 per patient per year. These
 #' parameter values are obtained by solving the equation `rate0*exp(GFR*theta) = rate` for `rate0`
 #' and `theta`. When the observed eGFR is above 30, the event rate is set to a very low value (10E-7), 
-#' while when the observed eGFR is below 10, the event rate is set to a very high value (10E5). This ensures that patients with observed low eGFR values 
+#' while when the observed eGFR is below or equal to 7, the event rate is set to a very high value (10E5). This ensures that patients with observed low eGFR values 
 #' always experience KFRT, while those with high eGFR values do not.
 #' 
 #' By default, the standard deviation for within-patient variability, `sigma`, is set to `NULL.` When left as `NULL`, `sigma` 
@@ -157,7 +157,7 @@ simKHCE <- function(n, CM_A, CM_P = - 4, n0 = n, TTE_A = 1000, TTE_P = TTE_A,
   d3$RATE <- d3$RATE0*exp(c2*(d3$SLOPE*d3$ADAY + d3$BASE0))
   ## Make sure that patients with higher than 30 observed eGFR cannot have KFRT
   ## Make surer that patients with lower than 5 observed eGFR always have KFRT
-  d3$RATE <- ifelse(d3$AVAL > 30, 10E-7, ifelse(d3$AVAL < 10, 10E5, d3$RATE))
+  d3$RATE <- ifelse(d3$AVAL > 30, 10E-7, ifelse(d3$AVAL <= 7, 10E5, d3$RATE))
   ## Calculate the cumulative event rate for each patient
   ### CUMRATE must be aligned with the intended interval indexing per ID; otherwise, hazard accumulation can be wrong.
   d3 <- d3[order(d3$ID, d3$ADAY), ]
