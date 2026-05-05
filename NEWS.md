@@ -1,4 +1,18 @@
 
+# hce 0.9.1.2
+
+### Bugs
+
+### Updates
+
+### New
+
+* A new function, `rweibullGF()`, simulates random numbers from a Weibull distribution with gamma frailty. 
+* Added a new `df_sigma` argument to `simKHCE()` to allow heavier-tailed measurement errors via a t-distribution.
+
+### Documentation
+
+
 # hce 0.9.1 
 
 *This release (nearly) finalizes the development of the function `simKHCE()` and should be the preferred version when using this function.*

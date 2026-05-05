@@ -19,7 +19,8 @@ simKHCE(
   m = 10,
   theta = -0.4605,
   phi = 0,
-  two_meas = c("no", "base", "postbase", "both")
+  two_meas = c("no", "base", "postbase", "both"),
+  df_sigma = Inf
 )
 }
 \arguments{
@@ -52,6 +53,8 @@ simKHCE(
 \item{phi}{coefficient of proportionality (between 0 and 1) of the treatment effect. The case of 0 corresponds to the uniform treatment effect.}
 
 \item{two_meas}{determines whether to use duplicate measurements at baseline and/or at \code{fixedfy}. The default is to use a single measurement.}
+
+\item{df_sigma}{degrees of freedom for the measurement error distribution. The default \code{Inf} gives normal measurement errors; must be more than 2.}
 }
 \value{
 a list containing the dataset \code{GFR} for longitudinal measurements of
@@ -75,14 +78,16 @@ and \code{theta}. When the observed eGFR is above 30, the event rate is set to a
 while when the observed eGFR is below or equal to 7, the event rate is set to a very high value (10E5). This ensures that patients with observed low eGFR values
 always experience KFRT, while those with high eGFR values do not.
 
-By default, the standard deviation for within-patient variability, \code{sigma}, is set to \code{NULL.} When left as \code{NULL}, \code{sigma}
-is calculated as \verb{sqrt(0.67*predicted eGFR)}. This approach results in time-dependent variability for measurements,
-where lower predicted eGFR values lead to reduced variability.
+By default, the within-patient standard deviation, \code{sigma}, is set to \code{NULL.} When left as \code{NULL}, \code{sigma}
+is calculated as \verb{sqrt(0.67*predicted eGFR)}, which yields time-dependent measurement variability,
+with lower predicted eGFR values corresponding to lower variability. When \code{df_sigma = Inf} (the default),
+measurement errors follow are normally distributed. When \code{df_sigma} is finite and greater than 2,
+measurement errors follow a t distribution with heavier tails, while maintaining the same time-dependent standard deviation defined by \code{sigma}.
 
 Given the overall effect \code{Delta} and the placebo progression rate \code{CM_P}, a fully uniform (purely additive) treatment effect—meaning the same average effect
 applies to all patients regardless of baseline progression—is implemented by setting \code{phi = 0} and \code{CM_A = Delta + CM_P.}
 A fully proportional treatment effect—no additive component, the effect scales with the baseline rate—is implemented by setting \code{CM_A = CM_P} and \verb{phi = Delta / |CM_P|}.
-A more relativistic intermediate effect (half additive and half proportional) is obtained by setting \verb{phi = Delta / (2 · |CM_P|)} and \code{CM_A = Delta / 2.}
+A more relativistic intermediate effect (half additive and half proportional) is obtained by setting \verb{phi = Delta / (2 · |CM_P|)} and \code{CM_A = Delta / 2 + CM_P.}
 
 The kidney hierarchical composite endpoint is defined in the following order:
 (1) Kidney Failure Replacement Therapy (KFRT); (2) Sustained eGFR < 15;
@@ -91,12 +96,7 @@ and (6) Change in eGFR. In practice, because KFRT is frequently initiated when t
 sustained eGFR < 15 events are rarely observed.
 }
 \examples{
-# Example 1 - minimal example
-set.seed(2022)
-L <- simKHCE(n = 1000, CM_A = -3.25)
-dat <- L$HCE
-calcWO(dat)
-# Example 2 - using the most important variables
+# Example - Specifying the most important variables
 set.seed(2022)
 ## The overall treatment effect
 Delta <- 0.75
