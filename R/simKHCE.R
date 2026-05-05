@@ -18,6 +18,7 @@
 #' @param theta coefficient of dependence of eGFR values and the risk of KFRT.
 #' @param phi coefficient of proportionality (between 0 and 1) of the treatment effect. The case of 0 corresponds to the uniform treatment effect.
 #' @param two_meas determines whether to use duplicate measurements at baseline and/or at `fixedfy`. The default is to use a single measurement.
+#' @param df_sigma degrees of freedom for the measurement error distribution. The default `Inf` gives normal measurement errors; must be more than 2.
 #' @details
 #' The default setting is `TTE_A = TTE_P` because, conditional on eGFR level, 
 #' the treatment effect does not influence the event rate of KFRT. In this model,
@@ -30,14 +31,16 @@
 #' while when the observed eGFR is below or equal to 7, the event rate is set to a very high value (10E5). This ensures that patients with observed low eGFR values 
 #' always experience KFRT, while those with high eGFR values do not.
 #' 
-#' By default, the standard deviation for within-patient variability, `sigma`, is set to `NULL.` When left as `NULL`, `sigma` 
-#' is calculated as `sqrt(0.67*predicted eGFR)`. This approach results in time-dependent variability for measurements, 
-#' where lower predicted eGFR values lead to reduced variability.
+#' By default, the within-patient standard deviation, `sigma`, is set to `NULL.` When left as `NULL`, `sigma` 
+#' is calculated as `sqrt(0.67*predicted eGFR)`, which yields time-dependent measurement variability, 
+#' with lower predicted eGFR values corresponding to lower variability. When `df_sigma = Inf` (the default), 
+#' measurement errors follow are normally distributed. When `df_sigma` is finite and greater than 2, 
+#' measurement errors follow a t distribution with heavier tails, while maintaining the same time-dependent standard deviation defined by `sigma`.
 #'
 #' Given the overall effect `Delta` and the placebo progression rate `CM_P`, a fully uniform (purely additive) treatment effect—meaning the same average effect 
 #' applies to all patients regardless of baseline progression—is implemented by setting `phi = 0` and `CM_A = Delta + CM_P.` 
 #' A fully proportional treatment effect—no additive component, the effect scales with the baseline rate—is implemented by setting `CM_A = CM_P` and `phi = Delta / |CM_P|`. 
-#' A more relativistic intermediate effect (half additive and half proportional) is obtained by setting `phi = Delta / (2 · |CM_P|)` and `CM_A = Delta / 2.`
+#' A more relativistic intermediate effect (half additive and half proportional) is obtained by setting `phi = Delta / (2 · |CM_P|)` and `CM_A = Delta / 2 + CM_P.`
 #' 
 #' The kidney hierarchical composite endpoint is defined in the following order: 
 #' (1) Kidney Failure Replacement Therapy (KFRT); (2) Sustained eGFR < 15; 
@@ -52,12 +55,7 @@
 #' @md
 #' @seealso [hce::simHCE()] for a general function of simulating `hce` datasets.
 #' @examples
-#' # Example 1 - minimal example
-#' set.seed(2022)
-#' L <- simKHCE(n = 1000, CM_A = -3.25)
-#' dat <- L$HCE
-#' calcWO(dat)
-#' # Example 2 - using the most important variables
+#' # Example - Specifying the most important variables
 #' set.seed(2022)
 #' ## The overall treatment effect
 #' Delta <- 0.75
@@ -74,7 +72,7 @@
 simKHCE <- function(n, CM_A, CM_P = - 4, n0 = n, TTE_A = 1000, TTE_P = TTE_A,  
                     fixedfy = 2, Emin = 20, Emax = 100, 
                     sigma = NULL, Sigma = 3,
-                    m = 10, theta = - .4605, phi = 0, two_meas = c("no", "base", "postbase", "both")){
+                    m = 10, theta = - .4605, phi = 0, two_meas = c("no", "base", "postbase", "both"), df_sigma = Inf){
   two_meas <- match.arg(two_meas)
   n <- n[1] 
   CM_A <- CM_A[1] 
@@ -90,11 +88,14 @@ simKHCE <- function(n, CM_A, CM_P = - 4, n0 = n, TTE_A = 1000, TTE_P = TTE_A,
   m <- round(m)[1]
   theta <- theta[1]
   phi <- phi[1]
+  df_sigma <- df_sigma[1]
   stopifnot("The standard deviation `Sigma` should be positive." 
             = all(c(Sigma > 0)), 
             "`phi` should be in the interval [0, 1]" = all(c(phi >= 0, phi <= 1)),
             "GFR range `Emin` and `Emax` should be non-negative and `Emin` < `Emax`." = all(c(Emin >= 0, Emax >= 0, Emin < Emax)),
-            "`m` must be >= 1" = m >= 1)
+            "`m` must be >= 1" = m >= 1,
+            "The measurement error degrees of freedom, `df_sigma`, must be numeric and greater than 2, or `Inf` for normal errors." = 
+              is.numeric(df_sigma) && df_sigma > 2)
   if(!is.null(sigma)) stopifnot("The standard deviation `sigma` must be positive or left `NULL` for data-driven estimates." = sigma > 0)
   
   N <- n0 + n
@@ -126,13 +127,25 @@ simKHCE <- function(n, CM_A, CM_P = - 4, n0 = n, TTE_A = 1000, TTE_P = TTE_A,
     VAR[VAR <= 0.1] <- 0.1 #prevent the variance being negative or too small.
     sigma <- sqrt(VAR)
   }
-  BASE <- d1$BASE0 + stats::rnorm(nrow(d1), sd = sigma)
+  if(is.infinite(df_sigma)){
+    # If df_sigma is infinite, we use the normal distribution for the measurement error, which is the default.
+    BASE <- d1$BASE0 + stats::rnorm(nrow(d1), sd = sigma)
+  } else {
+    # If df_sigma is finite, we use the t distribution for the measurement error, which has heavier tails than the normal distribution.
+    BASE <- d1$BASE0 + sigma*sqrt((df_sigma - 2)/df_sigma)*stats::rt(nrow(d1), df = df_sigma)
+  }
   d1$AVAL <- d1$SLOPE*d1$ADAY + ifelse(BASE <= Emin, Emin, ifelse(BASE >= Emax, Emax, BASE))
   d1$AVAL[d1$AVAL < 0] <- 0
   ######## Added a new implementation to handle double measurements at baseline or at PADY. #########
   if(two_meas != "no"){
     # BASE0 and SLOPE are the same for both measurements, hence they are correlated. ########
-    BASE1 <- d1$BASE0 + stats::rnorm(nrow(d1), sd = sigma)
+    if(is.infinite(df_sigma)){
+      # If df_sigma is infinite, we use the normal distribution for the measurement error, which is the default.
+      BASE1 <- d1$BASE0 + stats::rnorm(nrow(d1), sd = sigma)
+    } else {
+      # If df_sigma is finite, we use the t distribution for the measurement error, which has heavier tails than the normal distribution.
+      BASE1 <- d1$BASE0 + sigma*sqrt((df_sigma - 2)/df_sigma)*stats::rt(nrow(d1), df = df_sigma)
+    }
     d1$AVAL1 <- d1$SLOPE * d1$ADAY + ifelse(BASE1 <= Emin, Emin, ifelse(BASE1 >= Emax, Emax, BASE1))  
   }
   if(two_meas == "base"){
