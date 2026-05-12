@@ -20,37 +20,87 @@
 #' @param two_meas determines whether to use duplicate measurements at baseline and/or at `fixedfy`. The default is to use a single measurement.
 #' @param df_sigma degrees of freedom for the measurement error distribution. The default `Inf` gives normal measurement errors; must be more than 2.
 #' @details
-#' The default setting is `TTE_A = TTE_P` because, conditional on eGFR level, 
+#' The default setting is `TTE_A = TTE_P` because, conditional on eGFR level,
 #' the treatment effect does not influence the event rate of KFRT. In this model,
 #' the effect of treatment on KFRT operates entirely through its impact on eGFR decline.
-#' 
-#' The parameters `TTE_A` and `theta` are chosen so that when GFR is 15, the event rate 
-#' is 1 per patient per year, and when GFR is 25, the event rate is 0.01 per patient per year. These
-#' parameter values are obtained by solving the equation `rate0*exp(GFR*theta) = rate` for `rate0`
-#' and `theta`. When the observed eGFR is above 30, the event rate is set to a very low value (10E-7), 
-#' while when the observed eGFR is below or equal to 7, the event rate is set to a very high value (10E5). This ensures that patients with observed low eGFR values 
-#' always experience KFRT, while those with high eGFR values do not.
-#' 
-#' By default, the within-patient standard deviation, `sigma`, is set to `NULL.` When left as `NULL`, `sigma` 
-#' is calculated as `sqrt(0.67*predicted eGFR)`, which yields time-dependent measurement variability, 
-#' with lower predicted eGFR values corresponding to lower variability. When `df_sigma = Inf` (the default), 
-#' measurement errors follow are normally distributed. When `df_sigma` is finite and greater than 2, 
-#' measurement errors follow a t distribution with heavier tails, while maintaining the same time-dependent standard deviation defined by `sigma`.
 #'
-#' Given the overall effect `Delta` and the placebo progression rate `CM_P`, a fully uniform (purely additive) treatment effect—meaning the same average effect 
-#' applies to all patients regardless of baseline progression—is implemented by setting `phi = 0` and `CM_A = Delta + CM_P.` 
-#' A fully proportional treatment effect—no additive component, the effect scales with the baseline rate—is implemented by setting `CM_A = CM_P` and `phi = Delta / |CM_P|`. 
-#' A more relativistic intermediate effect (half additive and half proportional) is obtained by setting `phi = Delta / (2 · |CM_P|)` and `CM_A = Delta / 2 + CM_P.`
-#' 
-#' The kidney hierarchical composite endpoint is defined in the following order: 
-#' (1) Kidney Failure Replacement Therapy (KFRT); (2) Sustained eGFR < 15; 
-#' (3) Sustained 57 percent or more decline in eGFR; (4) Sustained 50 percent or more  decline in eGFR; (5) Sustained 40 percent or more decline in eGFR; 
-#' and (6) Change in eGFR. In practice, because KFRT is frequently initiated when true eGFR is very low, 
-#' sustained eGFR < 15 events are rarely observed.
-#' @return a list containing the dataset `GFR` for longitudinal measurements of 
-#' eGFR and the competing KFRT events, the dataset `ADET` for the time-to-event 
-#' kidney outcomes (sustained declines or sustained low levels of eGFR), 
-#' and the combined `HCE` dataset for the kidney hierarchical composite endpoint.
+#' Let `CM_A` and `CM_P` be denoted by \eqn{\beta_A} and \eqn{\beta_P}, respectively.
+#' Let `TTE_A` and `TTE_P` be denoted by \eqn{\lambda_A} and \eqn{\lambda_P}, respectively.
+#' Let `theta` be denoted by \eqn{\theta}, `phi` by \eqn{\phi}, `sigma` by \eqn{\sigma},
+#' `Sigma` by \eqn{\Sigma}, and `df_sigma` by \eqn{\nu}.
+#'
+#' The parameters `TTE_A` and `theta` are chosen so that when GFR is 15, the event rate
+#' is 1 per patient per year, and when GFR is 25, the event rate is 0.01 per patient per year. These
+#' parameter values are obtained by solving
+#' \deqn{
+#' \lambda_g \exp(\theta \cdot \mathrm{GFR}) = \mathrm{rate}
+#' }
+#' for the group-specific baseline rate \eqn{\lambda_g} and \eqn{\theta}. When the observed eGFR is above 30,
+#' the event rate is set to a very low value (`10e-7`), while when the observed eGFR is below or equal to 7,
+#' the event rate is set to a very high value (`10e5`). This ensures that patients with observed low eGFR values
+#' always experience KFRT, while those with high eGFR values do not.
+#'
+#' By default, the within-patient standard deviation, `sigma`, is set to `NULL`. When left as `NULL`, `sigma`
+#' is calculated as
+#' \deqn{
+#' \sigma_{ij} = \sqrt{0.67 \cdot \mu_{ij}},
+#' }
+#' where \eqn{\mu_{ij}} denotes the predicted eGFR for patient \eqn{i} at visit \eqn{j}. This yields
+#' time-dependent measurement variability, with lower predicted eGFR values corresponding to lower variability.
+#' In the implementation, to prevent the variance from becoming negative or too small, the quantity
+#' \eqn{0.67 \cdot \mu_{ij}} is truncated below at `0.1` before taking the square root.
+#'
+#' When `df_sigma = Inf` (the default), measurement errors are normally distributed:
+#' \deqn{
+#' \varepsilon_{ij} \sim N(0, \sigma_{ij}^2).
+#' }
+#' When `df_sigma` is finite and greater than 2, measurement errors follow a Student t distribution
+#' with heavier tails:
+#' \deqn{
+#' \varepsilon_{ij} = \sigma_{ij}\sqrt{\frac{\nu - 2}{\nu}} T_{\nu},
+#' }
+#' where \eqn{\nu =} `df_sigma` and \eqn{T_{\nu}} is a standard t random variable with \eqn{\nu}
+#' degrees of freedom. This scaling preserves the same time-dependent standard deviation defined by `sigma`,
+#' so that
+#' \deqn{
+#' \mathrm{Var}(\varepsilon_{ij}) = \sigma_{ij}^2.
+#' }
+#'
+#' Given the overall effect `Delta` and the placebo progression rate `CM_P`, a fully uniform (purely additive)
+#' treatment effect—meaning the same average effect applies to all patients regardless of baseline progression—is
+#' implemented by setting \eqn{\phi = 0} and
+#' \deqn{
+#' \beta_A = \Delta + \beta_P.
+#' }
+#' A fully proportional treatment effect—no additive component, the effect scales with the baseline rate—is
+#' implemented by setting
+#' \deqn{
+#' \beta_A = \beta_P
+#' }
+#' and
+#' \deqn{
+#' \phi = \frac{\Delta}{|\beta_P|}.
+#' }
+#' A more relativistic intermediate effect (half additive and half proportional) is obtained by setting
+#' \deqn{
+#' \phi = \frac{\Delta}{2|\beta_P|}
+#' }
+#' and
+#' \deqn{
+#' \beta_A = \frac{\Delta}{2} + \beta_P.
+#' }
+#'
+#' The kidney hierarchical composite endpoint is defined in the following order:
+#' (1) Kidney Failure Replacement Therapy (KFRT); (2) Sustained eGFR < 15;
+#' (3) Sustained 57 percent or more decline in eGFR; (4) Sustained 50 percent or more decline in eGFR;
+#' (5) Sustained 40 percent or more decline in eGFR; and (6) Change in eGFR. In practice, because KFRT is
+#' frequently initiated when true eGFR is very low, sustained eGFR < 15 events are rarely observed.
+#'
+#' If `two_meas` is not `"no"`, a second measurement is generated using the same latent baseline eGFR and
+#' subject-specific slope, but with an independent measurement error draw from the same distribution as above.
+#' The two measurements are then averaged at baseline when `two_meas = "base"`, at the final visit when
+#' `two_meas = "postbase"`, or at both baseline and the final visit when `two_meas = "both"`. This implementation
+#' preserves correlation between the duplicate measurements because they share the same underlying true trajectory.
 #' @export
 #' @md
 #' @seealso [hce::simHCE()] for a general function of simulating `hce` datasets.

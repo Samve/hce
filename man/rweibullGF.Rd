@@ -4,16 +4,16 @@
 \alias{rweibullGF}
 \title{Simulate random numbers from a Weibull distribution with gamma frailty}
 \usage{
-rweibullGF(n, shape, rate, theta = 1)
+rweibullGF(n, rate, shape = 1, theta = 1)
 }
 \arguments{
 \item{n}{number of observations.}
 
-\item{shape}{shape parameter of the Weibull distribution.}
-
 \item{rate}{rate parameter of the Weibull distribution.}
 
-\item{theta}{Variance parameter of the gamma frailty distribution, with a default value of 1. A value of 0 corresponds to no frailty, that is, a standard Weibull distribution.}
+\item{shape}{shape parameter of the Weibull distribution, with a default value of 1 (exponential).}
+
+\item{theta}{variance parameter of the gamma frailty distribution, with a default value of 1.}
 }
 \value{
 a vector of random numbers of length \code{n}.
@@ -22,19 +22,59 @@ a vector of random numbers of length \code{n}.
 Simulate random numbers from a Weibull distribution with gamma frailty
 }
 \details{
-The survival function is given by \deqn{S(t|\lambda, \alpha, \gamma) = e^{-\gamma\cdot\lambda\cdot t^\alpha},\ \ \alpha>0,\,\lambda>0,} where \eqn{\alpha} is the shape parameter, \eqn{\lambda} is the rate parameter, and \eqn{\gamma} is the frailty generated from a gamma distribution with \eqn{shape = \frac{1}{\theta}}
-and \eqn{scale=\theta} which results in a frailty variance of \eqn{\theta}. When \eqn{\theta = 0}, the distribution reduces to a standard Weibull distribution without frailty.
+Let \eqn{\gamma} denote a frailty term following a gamma distribution with
+\eqn{shape = 1 / \theta} and \eqn{scale = \theta}. Then \eqn{\gamma} has mean 1
+and variance \eqn{\theta}.
 
-The marginal (unconditional) survival function of the Weibull distribution with gamma frailty can be expressed as \deqn{S(t|\lambda, \alpha, \theta) = \left(1 + \theta\cdot\lambda\cdot t^\alpha\right)^{-\frac{1}{\theta}},\ \ \alpha>0,\,\lambda>0,\,\theta\geq 0.}
+Conditional on \eqn{\gamma}, the survival function is
+\deqn{
+S(t \mid \lambda, \alpha, \gamma) =
+\exp\left(-\gamma \lambda t^\alpha\right), \qquad \alpha > 0,\ \lambda > 0,
+}
+where \eqn{\alpha} is the shape parameter and \eqn{\lambda} is the rate parameter.
+
+Integrating over the gamma frailty distribution gives the marginal survival
+function
+\deqn{
+S(t \mid \lambda, \alpha, \theta) =
+\left(1 + \theta \lambda t^\alpha\right)^{-1 / \theta},
+\qquad \alpha > 0,\ \lambda > 0,\ \theta > 0.
+}
+This corresponds to the generalized log-logistic distribution (GLL) as implemented in \code{\link[=GLL]{GLL()}}.
+
+As \eqn{\theta \to 0}, this reduces to the standard Weibull distribution
+without frailty, with survival function
+\deqn{
+S(t \mid \lambda, \alpha) = \exp\left(-\lambda t^\alpha\right).
+}
+This corresponds to the Weibull distribution in \code{\link[stats:pweibull]{stats::pweibull()}} with \code{shape = shape} and \code{scale = rate^(-1 / shape)}.
+
+When \eqn{\theta = 1}, the survival function becomes
+\deqn{
+S(t \mid \lambda, \alpha, 1) = \left(1 + \lambda t^\alpha\right)^{-1},
+}
+which is the survival function of a log-logistic distribution.
 }
 \examples{
-# Simulate 10 random numbers
+## Example 1: each patient has a sampled time with potentially different
+## shape, rate, and theta values.
 set.seed(123)
-rweibullGF(n = 10, shape = 2, rate = 0.5, theta = 0.1)
+n <- 1000
+d <- data.frame(ID = 1:(2*n), TRTP = rep(c("A", "P"), each = n), 
+rate = rep(c(0.1, 0.15), each = n), shape = 1.5, theta = 1)
+d$time1 <- rweibullGF(n = 2*n, rate = d$rate, shape = d$shape, theta = d$theta)
+tapply(d$time1, d$TRTP, summary)
+## Example 2: all patients share the same parameter values.
+d$time2 <- rweibullGF(n = 2*n, rate = 0.1, theta = 0)
+tapply(d$time2, d$TRTP, summary)
 }
 \references{
-Wienke A. ``Frailty Models in Survival Analysis." Chapman and Hall/CRC (2010).
+Wienke A. "Frailty Models in Survival Analysis." Chapman and Hall/CRC (2010).
 }
 \seealso{
-\code{\link[=simTTE]{simTTE()}}  for simulation of a two-event time-to-event endpoint from this distribution under the illness-death model.
+\code{\link[=simTTE]{simTTE()}} for simulation of a two-event time-to-event endpoint
+from this distribution under the illness-death model.
+
+\code{\link[=pGLL]{pGLL()}} provides the cumulative distribution function of the
+generalized log-logistic distribution.
 }
