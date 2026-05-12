@@ -161,11 +161,11 @@ d$AVAL1 <- ifelse(d$EVENT1 == "DEATH", d$DEATH,
 # Keep frailty for second-event modelling
 d$FRAILTY <- c(gm, gm0)
 
-# Subset to subjects with first event = HOSP; they are at risk for post-hospitalisation death
+# Subset to subjects with first event = HOSP; they are at risk for post-hospitalization death
 d0 <- d[d$EVENT1 == "HOSP", ]
 
 if (nrow(d0) > 0) {
-  # SECOND EVENT MODEL: Death after hospitalisation using individual frailty
+  # SECOND EVENT MODEL: Death after hospitalization using individual frailty
   # Individual-specific post-HOSP rate:
   #   rate_i = baseline_rate * (fixedfy / AVAL1_i)^alpha * FRAILTY_i
   # Convert rate to scale (scale = 1 / rate_i) for exponential parameterization.
