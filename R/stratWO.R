@@ -6,7 +6,7 @@
 #' @return a list containing the stratified results and results by strata.
 #' @export
 #' @md
-#' @seealso [hce::stratWO.data.frame()]  methods.
+#' @seealso [hce::stratWO.data.frame()], [hce::stratWO.formula()]  methods.
 stratWO <- function(x, ...) {
   UseMethod("stratWO")
 }

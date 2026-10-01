@@ -6,24 +6,42 @@ author:
     affiliation: https://gasparyan.co/
 output:
   rmarkdown::html_document:
-          theme: "darkly"
-          highlight: "zenburn"
-          toc: true
-          toc_float: true
-          link-citations: true 
+    theme: "darkly"
+    highlight: "zenburn"
+    toc: true
+    toc_float: true
+link-citations: true
 bibliography: REFERENCES.bib
+biblio-style: science
 vignette: >
   %\VignetteIndexEntry{maraca}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
+<style>
+a[role="doc-biblioref"] {
+  color: green !important;
+}
+
+a[role="doc-biblioref"]:visited {
+  color: green !important;
+}
+
+a[role="doc-biblioref"]:hover {
+  color: lightgreen !important;
+  text-decoration: underline;
+}
+</style>
+
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+R <- function() knitr::include_graphics("Rlogo.png", dpi = 5000)
 ```
+
 
 ## Visualization
 

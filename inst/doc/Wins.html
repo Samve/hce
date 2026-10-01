@@ -1599,6 +1599,18 @@ border-radius: 0px;
 </div>
 
 
+<style>
+a[role="doc-biblioref"] {
+color: green !important;
+}
+a[role="doc-biblioref"]:visited {
+color: green !important;
+}
+a[role="doc-biblioref"]:hover {
+color: lightgreen !important;
+text-decoration: underline;
+}
+</style>
 <div id="win-odds-win-ratio-and-net-benefit" class="section level2">
 <h2>Win Odds, Win Ratio, and Net Benefit</h2>
 <div id="setup" class="section level3">
@@ -1607,43 +1619,39 @@ border-radius: 0px;
 <p>Load the package <code>hce</code> and check the version:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(hce)</span>
 <span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">packageVersion</span>(<span class="st">&quot;hce&quot;</span>)</span>
-<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="co">#&gt; [1] &#39;0.9.4&#39;</span></span></code></pre></div>
-<p>For citing the package, run <code>citation(&quot;hce&quot;)</code> <span class="citation">(Gasparyan 2026)</span>.</p>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="co">#&gt; [1] &#39;0.9.4.5&#39;</span></span></code></pre></div>
+<p>For citing the package, run <code>citation(&quot;hce&quot;)</code> <span class="citation">(<a href="#ref-hce">Gasparyan 2026</a>)</span>.</p>
 </div>
 <div id="terminology" class="section level3">
 <h3>Terminology</h3>
 <p>The concept of win probability for binary and continuous outcomes has
-been described by <span class="citation">Buyse (2010)</span> as the
-“proportion in favor of treatment” (see also <span class="citation">Rauch et al. (2014)</span>), while in <span class="citation">Verbeeck et al. (2021)</span> refers to it as the
-“probabilistic index”.</p>
-<p>The concept of “win ratio” was introduced by <span class="citation">Pocock et al. (2012)</span>. Unlike the win odds, the
-win ratio does not account for ties. The win odds, however, is the odds
-of winning, as described by <span class="citation">G. Dong et al.
-(2020)</span> (see also <span class="citation">Peng (2020)</span>; <span class="citation">Brunner, Vandemeulebroecke, and Mütze (2021)</span>;
-<span class="citation">Gasparyan, Kowalewski, et al. (2021)</span>). The
-same statistic was named as the Mann-Whitney odds by <span class="citation">O’Brien and Castelloe (2006)</span>. In <span class="citation">Gasparyan, Folkvaljon, et al. (2021)</span>, the “win
-ratio” was used as a general term and included ties in the definition.
-<span class="citation">Gaohong Dong et al. (2022)</span> suggested
-considering win ratio, win odds, and net benefit together as win
-statistics.</p>
+been described by <span class="citation">Buyse (<a href="#ref-buyse2010generalized">2010</a>)</span> as the “proportion in
+favor of treatment” (see also <span class="citation">Rauch et al. (<a href="#ref-rauch2014opportunities">2014</a>)</span>), while in <span class="citation">Verbeeck et al. (<a href="#ref-verbeeck2020unbiasedness">2021</a>)</span> refers to it as
+the “probabilistic index”.</p>
+<p>The concept of “win ratio” was introduced by <span class="citation">Pocock et al. (<a href="#ref-poc2012">2012</a>)</span>.
+Unlike the win odds, the win ratio does not account for ties. The win
+odds, however, is the odds of winning, as described by <span class="citation">G. Dong et al. (<a href="#ref-dong2020">2020</a>)</span> (see also <span class="citation">Peng (<a href="#ref-peng2020use">2020</a>)</span>;
+<span class="citation">Brunner, Vandemeulebroecke, and Mütze (<a href="#ref-brunner2021win">2021</a>)</span>; <span class="citation">Gasparyan, Kowalewski, et al. (<a href="#ref-gasparyan2021power">2021</a>)</span>). The same statistic was
+named as the Mann-Whitney odds by <span class="citation">O’Brien and
+Castelloe (<a href="#ref-obrien2006">2006</a>)</span>. In <span class="citation">Gasparyan, Folkvaljon, et al. (<a href="#ref-gasparyan2021adjusted">2021</a>)</span>, the “win ratio” was
+used as a general term and included ties in the definition. <span class="citation">Gaohong Dong et al. (<a href="#ref-dong2022winwinnet">2022</a>)</span> suggested considering win
+ratio, win odds, and net benefit together as win statistics.</p>
 <p>The concept of winning for the active group is the same as
 concordance for the active group. For two variables, <span class="math inline">\(X\)</span> and <span class="math inline">\(Y,\)</span> a pair is concordant if the
-observation with the larger value of <span class="math inline">\(X\)</span> also has the better value of <span class="math inline">\(Y\)</span> <span class="citation">(Agresti
-2013)</span>. If <span class="math inline">\(X\)</span> indicates the
-treatment group with the value 1 for the active group and 0 for the
-control group, and <span class="math inline">\(Y\)</span> is the ordinal
-value for the analysis, then concordance means that a patient in the
-active treatment group has a better value than a patient in the control
-group. Discordance means the patient in the active group has a worse
-value than the control patient. Therefore, the win ratio is the total
-number of concordances divided by the total number of discordances. The
-win ratio can be obtained from the Goodman-Kruskal gamma <span class="citation">(Kruskal and Goodman 1954)</span>, <span class="math inline">\(G\)</span>, as follows:</p>
+observation with the larger value of <span class="math inline">\(X\)</span> also has the better value of <span class="math inline">\(Y\)</span> <span class="citation">(<a href="#ref-agresti2013categorical">Agresti 2013</a>)</span>. If <span class="math inline">\(X\)</span> indicates the treatment group with the
+value 1 for the active group and 0 for the control group, and <span class="math inline">\(Y\)</span> is the ordinal value for the analysis,
+then concordance means that a patient in the active treatment group has
+a better value than a patient in the control group. Discordance means
+the patient in the active group has a worse value than the control
+patient. Therefore, the win ratio is the total number of concordances
+divided by the total number of discordances. The win ratio can be
+obtained from the Goodman-Kruskal gamma <span class="citation">(<a href="#ref-kruskal1954measures">Kruskal and Goodman 1954</a>)</span>,
+<span class="math inline">\(G\)</span>, as follows:</p>
 <p><span class="math display">\[WR=(1+G)/(1-G).\]</span></p>
-<p>The net benefit is Somers’ D C/R <span class="citation">(Somers
-1962)</span>, while the win odds is the Mann-Whitney odds <span class="citation">(Mann and Whitney 1947)</span>. Estimation of win
-statistics in the absence of censoring can be done using the theory of
-<em>U</em>-statistics <span class="citation">(Hoeffding
-1948)</span>.</p>
+<p>The net benefit is Somers’ D C/R <span class="citation">(<a href="#ref-somers1962new">Somers 1962</a>)</span>, while the win odds is
+the Mann-Whitney odds <span class="citation">(<a href="#ref-mann1947test">Mann and Whitney 1947</a>)</span>. Estimation
+of win statistics in the absence of censoring can be done using the
+theory of <em>U</em>-statistics <span class="citation">(<a href="#ref-Hoeff">Hoeffding 1948</a>)</span>.</p>
 </div>
 <div id="definitions" class="section level3">
 <h3>Definitions</h3>

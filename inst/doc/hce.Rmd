@@ -6,24 +6,43 @@ author:
     affiliation: https://gasparyan.co/
 output:
   rmarkdown::html_document:
-          theme: "darkly"
-          highlight: "zenburn"
-          toc: true
-          toc_float: true
-          link-citations: true 
+    theme: "darkly"
+    highlight: "zenburn"
+    toc: true
+    toc_float: true
+link-citations: true
 bibliography: REFERENCES.bib
+biblio-style: science
 vignette: >
   %\VignetteIndexEntry{Hce}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
+
+<style>
+a[role="doc-biblioref"] {
+  color: green !important;
+}
+
+a[role="doc-biblioref"]:visited {
+  color: green !important;
+}
+
+a[role="doc-biblioref"]:hover {
+  color: lightgreen !important;
+  text-decoration: underline;
+}
+</style>
+
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+R <- function() knitr::include_graphics("Rlogo.png", dpi = 5000)
 ```
+
 
 ## Introduction
 
@@ -83,7 +102,7 @@ dat0 <- data.frame(TRTP = rep(c("A", "P"), each = n),
 
 Based on these outcomes, several methods can be used to construct hierarchical composite endpoints. Below are two approaches with their implementations.
 
-1. The most-important outcome approach
+1. The most-important outcome approach [@gasparyan2026univariate]
 
 Select a single outcome per patient—the highest-priority one. If a patient experienced death, select death (regardless of hospitalization). If no death occurred, select hospitalization (only if it did not lead to subsequent death). Otherwise, select no outcome. This yields three categories: I. Death, II. Hospitalization (without subsequent death), III. No outcome.
 
@@ -96,7 +115,7 @@ dat1 <- as_hce(dat1)
 summaryWO(dat1)$summary
 ```
 
-2. The move-down approach (see @poc2012)
+2. The move-down approach [@poc2012]
 
 Compare patients first on death. The active (control) patient wins if they are alive while the patient in the control (active) group died. If both patients died, it is a tie on death and the comparison proceeds to the next outcome (hospitalization), using the same winner logic. If no winner is determined after evaluating hospitalization, declare a tie (there are no further outcomes to break ties).
 

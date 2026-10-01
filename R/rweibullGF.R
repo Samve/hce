@@ -1,9 +1,9 @@
 #' Simulate random numbers from a Weibull distribution with gamma frailty
 #'
 #' @param n number of observations.
-#' @param rate rate parameter of the Weibull distribution.
-#' @param shape shape parameter of the Weibull distribution, with a default value of 1 (exponential).
-#' @param theta variance parameter of the gamma frailty distribution, with a default value of 1. 
+#' @param rate rate parameter of the Weibull distribution. Must be a positive vector of length 1 or `n`.
+#' @param shape shape parameter of the Weibull distribution, with a default value of 1 (exponential). Must be a positive vector of length 1 or `n`.
+#' @param theta variance parameter of the gamma frailty distribution, with a default value of 1. Must be a positive vector of length 1 or `n`.
 #' @details
 #' Let \eqn{\gamma} denote a frailty term following a gamma distribution with
 #' \eqn{shape = 1 / \theta} and \eqn{scale = \theta}. Then \eqn{\gamma} has mean 1
@@ -37,7 +37,7 @@
 #' S(t \mid \lambda, \alpha, 1) = \left(1 + \lambda t^\alpha\right)^{-1},
 #' }
 #' which is the survival function of a log-logistic distribution.
-#' @return a vector of random numbers of length `n`.
+#' @return a vector of random numbers of length `n`. When `shape` and `rate` are vectors of length `n`, then each element of the output is generated using the corresponding elements of `shape`, `rate`, and `theta`. 
 #' @export
 #' @md
 #' @references Wienke A. "Frailty Models in Survival Analysis." Chapman and Hall/CRC (2010).

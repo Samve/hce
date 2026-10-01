@@ -2,7 +2,7 @@
 % Please edit documentation in R/simTTE.R
 \name{simTTE}
 \alias{simTTE}
-\title{Simulate an \code{adhce} dataset with two correlated outcomes (illness - death model)}
+\title{Simulate an \code{adhce} dataset under an illness-death model with two correlated outcomes}
 \usage{
 simTTE(
   n,
@@ -51,8 +51,11 @@ simTTE(
 an object of class \code{adhce}.
 }
 \description{
-Simulate an \code{adhce} dataset with two correlated outcomes - death and hospitalization - from a heterogeneous population. The correlation between these outcomes arises from population heterogeneity. Models the risk of death following hospitalization as dependent on the timing
-of the hospitalization, reflecting strong dependence between the times to the first and second events (i.e., event clustering).
+The simulation generates hospitalization and death times in a heterogeneous population,
+where correlation between the two outcomes is induced by shared patient-level frailty.
+In addition, the risk of death after hospitalization depends on the timing of
+the hospitalization, allowing the model to represent both shared underlying risk and
+true event dependence between the first and second events.
 }
 \details{
 The default setting assumes \code{TTE_A = TTE_P}. Both \code{TTE_A} and \code{TTE_P} must be numeric vectors of length two, corresponding to the event rates
@@ -63,8 +66,8 @@ for hospitalization and
 \deqn{\gamma^{\alpha_0}\cdot rate\cdot t^{shape}}
 for death, where \eqn{\gamma} (\code{gamma}) is a patient-specific frailty drawn from a gamma distribution with mean 1 and
 variance \eqn{\theta}, shared between death and hospitalization for a given patient. The parameter \eqn{\theta} (\code{theta}) represents population heterogeneity and also induces
-correlation between death and hospitalization as competing first events. The parameter \eqn{\alpha_0} (\code{alpha0}) controls the heterogeneity of time to death through its
-effect on heterogeneity. Death after hospitalization is simulated from an exponential distribution with a constant hazard that depends on the timing \eqn{t_1}
+correlation between death and hospitalization as competing first events. The parameter \eqn{\alpha_0} (\code{alpha0}) controls the heterogeneity of time to death.
+Death after hospitalization is simulated from an exponential distribution with a constant hazard that depends on the timing \eqn{t_1}
 of the first event (hospitalization) as
 \deqn{\frac{TTE_A[2] + TTE_P[2]}{2}\cdot \left(\frac{t_1}{fixedfy}\right)^{\alpha}\cdot \gamma^{\alpha_0}}
 for the placebo arm and

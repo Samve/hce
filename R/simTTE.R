@@ -1,8 +1,11 @@
-#' Simulate an `adhce` dataset with two correlated outcomes (illness - death model)
-#' 
-#' Simulate an `adhce` dataset with two correlated outcomes - death and hospitalization - from a heterogeneous population. The correlation between these outcomes arises from population heterogeneity. Models the risk of death following hospitalization as dependent on the timing 
-#' of the hospitalization, reflecting strong dependence between the times to the first and second events (i.e., event clustering).
+#' Simulate an `adhce` dataset under an illness-death model with two correlated outcomes
 #'
+#' The simulation generates hospitalization and death times in a heterogeneous population, 
+#' where correlation between the two outcomes is induced by shared patient-level frailty. 
+#' In addition, the risk of death after hospitalization depends on the timing of 
+#' the hospitalization, allowing the model to represent both shared underlying risk and 
+#' true event dependence between the first and second events.
+#' 
 #' @param n sample size in the active treatment group.
 #' @param n0 sample size in the placebo treatment group.
 #' @param TTE_A event rates in the active group for the time-to-event outcomes; a numeric vector of length two.
@@ -25,8 +28,8 @@
 #' \deqn{\gamma^{\alpha_0}\cdot rate\cdot t^{shape}} 
 #' for death, where \eqn{\gamma} (`gamma`) is a patient-specific frailty drawn from a gamma distribution with mean 1 and 
 #' variance \eqn{\theta}, shared between death and hospitalization for a given patient. The parameter \eqn{\theta} (`theta`) represents population heterogeneity and also induces 
-#' correlation between death and hospitalization as competing first events. The parameter \eqn{\alpha_0} (`alpha0`) controls the heterogeneity of time to death through its 
-#' effect on heterogeneity. Death after hospitalization is simulated from an exponential distribution with a constant hazard that depends on the timing \eqn{t_1} 
+#' correlation between death and hospitalization as competing first events. The parameter \eqn{\alpha_0} (`alpha0`) controls the heterogeneity of time to death. 
+#' Death after hospitalization is simulated from an exponential distribution with a constant hazard that depends on the timing \eqn{t_1} 
 #' of the first event (hospitalization) as 
 #' \deqn{\frac{TTE_A[2] + TTE_P[2]}{2}\cdot \left(\frac{t_1}{fixedfy}\right)^{\alpha}\cdot \gamma^{\alpha_0}}
 #' for the placebo arm and 

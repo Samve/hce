@@ -1,0 +1,411 @@
+---
+title: "Generalized Log-Logistic Distributions"
+date: "`r format(as.Date('2026-08-14'), '%d %B, %Y')`"
+author:
+  - name: "Samvel B. Gasparyan"
+    affiliation: https://gasparyan.co/
+output:
+  rmarkdown::html_document:
+    theme: "darkly"
+    highlight: "zenburn"
+    toc: true
+    toc_float: true
+link-citations: true
+bibliography: REFERENCES.bib
+biblio-style: science
+vignette: >
+  %\VignetteIndexEntry{GLL}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+<style>
+a[role="doc-biblioref"] {
+  color: green !important;
+}
+
+a[role="doc-biblioref"]:visited {
+  color: green !important;
+}
+
+a[role="doc-biblioref"]:hover {
+  color: lightgreen !important;
+  text-decoration: underline;
+}
+</style>
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+R <- function() knitr::include_graphics("Rlogo.png", dpi = 5000)
+```
+
+
+### Setup
+
+```{r echo=FALSE, out.width = '33%'}
+knitr::include_graphics("hex-hce.png")
+```
+
+Load the package `hce` and check the version
+
+```{r eval = TRUE}
+library(hce)
+packageVersion("hce")
+```
+
+For citing the package, run `citation("hce")` [@hce].
+
+## Background
+
+In this vignette, we describe survival-analysis concepts relevant to hierarchical composite endpoints (HCEs). Many HCEs are constructed from multivariate, or dependent,
+survival endpoints. The generalized log-logistic (GLL) distribution is a
+flexible parametric model with an intuitive motivation for modelling clinical
+trial data. The GLL is also known as the Burr Type XII or Singh-Maddala distribution.
+
+We first introduce the GLL distribution as the marginal distribution obtained when event times follow a Weibull model conditional on patient-level gamma frailty. We then describe properties of this distribution that are useful for simulating survival data in clinical trials and constructing HCEs.
+
+The GLL distribution generalizes the log-logistic distribution
+[@bennett1983log], which belongs to the family of survival proportional-odds
+models (SPOMs) [@bennett1983analysis]. SPOMs have been used in heart failure
+(HF) clinical trials to model time to the first event in the composite endpoint
+of HF hospitalization and cardiovascular death (CVD), an established primary
+endpoint in pivotal HF trials [@myte2025survival].
+
+## Weibull distribution conditional on gamma frailty
+
+Suppose that
+
+$$
+\xi \sim \operatorname{Gamma}\left(\frac{1}{\theta}, \frac{1}{\theta}\right),
+$$
+
+where the first parameter is the shape and the second is the rate. The random
+variable $\xi$ represents patient-level frailty, reflecting population
+heterogeneity in baseline event risk. For $\theta > 0$,
+
+$$
+\mathrm{E}(\xi) = 1,
+\qquad
+\mathrm{Var}(\xi) = \theta.
+$$
+
+Thus, larger values of $\theta$ indicate greater heterogeneity in the
+population.
+
+Let $T$ denote the time to an event of interest. Conditional on the frailty
+term, assume that
+
+$$
+T \mid \xi \sim \operatorname{Weibull}(\lambda \xi, \alpha),
+$$
+
+where $\lambda > 0$ is the rate parameter and $\alpha > 0$ is the shape
+parameter. Under this rate-scale parameterization, the conditional survival and
+cumulative hazard functions are
+
+$$
+S(t \mid \xi)
+=
+\exp\{-\Lambda(t \mid \xi)\}
+=
+\exp(-\lambda \xi t^\alpha),
+$$
+
+and
+
+$$
+\Lambda(t \mid \xi) = \lambda \xi t^\alpha.
+$$
+
+Integrating over the gamma frailty distribution gives the marginal survival
+function
+
+$$
+S(t) = \left\{1 + \theta \Lambda(t)\right\}^{-1/\theta},
+$$
+
+where $\Lambda(t)$ is the cumulative baseline hazard. For the Weibull baseline, this becomes
+
+$$
+S(t|\lambda,\alpha,\theta) = \left(1 + \theta \lambda t^\alpha\right)^{-1/\theta}.
+$$
+
+The parameters $\lambda$ and $\alpha$ are the Weibull rate and shape
+parameters, respectively, and must be positive. The heterogeneity parameter
+$\theta$ is non-negative. When $\theta = 0$, the expression is interpreted
+as a limit and reduces to the standard Weibull survival function without
+frailty:
+
+$$
+S(t|\lambda,\alpha,\theta=0) = \exp(-\lambda t^\alpha).
+$$
+The density function is given by:
+$$
+f(t|\lambda,\alpha,\theta) = \lambda\alpha t^{\alpha-1}\left(1 + \theta \lambda t^\alpha\right)^{-1/\theta-1},
+$$
+ and when $\theta = 0$, it reduces to the standard Weibull density function without frailty:
+ 
+$$
+f(t|\lambda,\alpha,\theta=0) = \lambda\alpha t^{\alpha-1}\exp(-\lambda t^\alpha).
+$$
+
+- The GLL distribution is also known as the **Burr Type XII** or **Singh-Maddala** distribution. 
+
+- When $\theta = 1$, its marginal survival function corresponds to the log-logistic distribution, which is implemented, for example, in the `flexsurv` package [@flexsurv]. 
+
+- When $\alpha=1,$ the distribution reduces to the **Lomax**, or **Pareto Type II**, distribution. This is the marginal distribution obtained when an exponential random variable has a gamma-distributed frailty rate. 
+
+The following functions are available for simulating from the conditional Weibull model with gamma frailty and from the marginal GLL family. See `?GLL` for documentation:
+
+```{r eval=FALSE}
+rweibullGF()
+rGLL()
+pGLL()
+qGLL()
+hGLL()
+HGLL()
+```
+
+As usual, `r` denotes random-number generation, `p` the cumulative distribution
+function, `q` the quantile function, and `h` the hazard function. The
+capitalized `H` denotes the cumulative hazard function. The density function
+`dGLL()` also includes a `log` argument for calculating the log-density.
+
+The `rGLL()` function uses the inverse-transformation method by applying the
+GLL quantile function to a standard uniform random variable. Similarly,
+`rweibullGF()` first samples the frailty term $\xi$ from its gamma
+distribution and then applies the inverse conditional Weibull survival
+function to a standard uniform random variable. These approaches generate
+samples from the same marginal distribution. The following code illustrates
+their equivalence empirically.
+
+```{r}
+n <- 1000
+rate <- 0.5
+shape <- 2
+theta <- 1.5
+
+y_gll <- rGLL(
+  n,
+  rate = rate,
+  shape = shape,
+  theta = theta
+)
+
+y_weibull_gf <- rweibullGF(
+  n,
+  rate = rate,
+  shape = shape,
+  theta = theta
+)
+
+ecdf_gll <- ecdf(y_gll)
+ecdf_weibull_gf <- ecdf(y_weibull_gf)
+
+x <- seq(0, 5, 0.01)
+
+plot(
+  x,
+  ecdf_gll(x),
+  type = "s",
+  col = "blue",
+  lwd = 2,
+  lty = 1,
+  ylim = c(0, 1),
+  ylab = "Empirical Cumulative Distribution Function",
+  xlab = "Time",
+  main = "Empirical CDFs of GLL and Weibull with Gamma Frailty"
+)
+
+lines(
+  x,
+  ecdf_weibull_gf(x),
+  type = "s",
+  col = "red",
+  lwd = 3,
+  lty = 2
+)
+
+legend(
+  "bottomright",
+  legend = c("GLL", "Weibull with gamma frailty"),
+  col = c("blue", "red"),
+  lwd = c(2, 3),
+  lty = c(1, 2)
+)
+```
+
+## Time-dependent hazard ratio
+
+The marginal hazard function of the GLL distribution is
+
+$$
+h(t \mid \lambda, \alpha, \theta)
+=
+\frac{\lambda \alpha t^{\alpha - 1}}
+{1 + \theta \lambda t^\alpha}.
+$$
+
+Consider two independent GLL random variables with the same shape parameter
+$\alpha$ and heterogeneity parameter $\theta$, but with different rate
+parameters $\lambda_1$ and $\lambda_0$. Their marginal hazard ratio is
+
+$$
+HR(t)
+=
+\frac{\lambda_1}{\lambda_0}
+\frac{1 + \theta \lambda_0 t^\alpha}
+{1 + \theta \lambda_1 t^\alpha}.
+$$
+
+Thus, unlike the conditional Weibull hazard ratio, the marginal hazard ratio is
+generally time-dependent when $\theta > 0$. As time increases, the hazard
+ratio tends toward one when $\lambda_1 \ne \lambda_0$, reflecting the
+attenuation of treatment contrasts caused by unobserved heterogeneity.
+
+The following code illustrates the hazard ratio for different values of the
+heterogeneity parameter, using $\alpha = 0.85$.
+
+```{r}
+rate1 <- 0.08
+rate0 <- 0.10
+shape <- 0.85
+
+hr_at_time_zero <- rate1 / rate0
+
+hazard_ratio <- function(time, theta, alpha = shape) {
+  hr_at_time_zero *
+    (1 + theta * rate0 * time^alpha) /
+    (1 + theta * rate1 * time^alpha)
+}
+
+time <- seq(0, 3, 0.001)
+
+plot(
+  time,
+  hazard_ratio(time, theta = 1),
+  type = "l",
+  col = "blue",
+  lwd = 2,
+  ylim = c(0.75, 1.1),
+  log = "y",
+  ylab = "Hazard Ratio",
+  xlab = "Time",
+  lty = 1
+)
+
+lines(
+  time,
+  hazard_ratio(time, theta = 5),
+  col = "red",
+  lwd = 2,
+  lty = 2
+)
+
+lines(
+  time,
+  hazard_ratio(time, theta = 10),
+  col = "darkgreen",
+  lwd = 2,
+  lty = 3
+)
+
+abline(
+  h = c(hr_at_time_zero, 1),
+  lty = 4
+)
+
+legend(
+  "topright",
+  legend = expression(theta == 1, theta == 5, theta == 10),
+  col = c("blue", "red", "darkgreen"),
+  lwd = 2,
+  lty = 1:3
+)
+```
+
+## Time-dependent survival odds ratio
+
+
+The marginal survival odds of the GLL distribution can be calculate as
+
+$$SO(t)=\frac{S(t)}{1-S(t)}=\frac{1}{(1+\theta\lambda t^\alpha)^\frac{1}{\theta}-1},$$
+therefore, the survival odds ratio of the active vs control with the same $\theta$ and $\alpha$ but different rate parameters ($\lambda_0$ for control and $\lambda_1$ for active) is given by
+$$SOR(t)=\frac{(1+\theta\lambda_0 t^\alpha)^\frac{1}{\theta}-1}{(1+\theta\lambda_1 t^\alpha)^\frac{1}{\theta}-1}.$$
+If we consider $1/SOR(t),$ then for $\theta=1$ which corresponds to the log-logistic distribution, $1/SOR(t)=\frac{\lambda_1}{\lambda_0}$ confirming the proportionality of odds for log-logistic distributions with the same shape parameter. In general, $1/SOR(t)$ is time dependent and $1/SOR(0)=\frac{\lambda_1}{\lambda_0}$ and when $t\to\infty,$ 
+$$1/SOR(t)\to \left(\frac{\lambda_1}{\lambda_0}\right)^\frac{1}{\theta}.$$
+
+## Time-invariant quantile ratio
+
+
+The GLL quantile function $Q(p)$ is given by
+
+$$
+Q(p \mid \lambda,\alpha,\theta)
+=
+\left[
+\frac{(1-p)^{-\theta}-1}
+{\theta\lambda}
+\right]^{1/\alpha},
+\qquad \theta>0.
+$$
+
+When $\theta=0$, the GLL distribution reduces to the Weibull distribution.
+Taking the limit as $\theta\to0$ gives
+
+$$
+Q(p \mid \lambda,\alpha,\theta=0)
+=
+\left[
+\frac{-\log(1-p)}
+{\lambda}
+\right]^{1/\alpha}.
+$$
+
+The quantile ratio for the active treatment relative to control is therefore
+
+$$
+QR(p)
+=
+\frac{Q_1(p)}{Q_0(p)}
+=
+\left(\frac{\lambda_0}{\lambda_1}\right)^{1/\alpha}.
+$$
+
+Thus, the quantile ratio is independent of $\theta$ and is the same for every quantile level.
+
+The same result holds for $\theta=0$, because
+
+$$
+\frac{Q_1(p)}{Q_0(p)}
+=
+\frac{
+\left[-\log(1-p)/\lambda_1\right]^{1/\alpha}
+}{
+\left[-\log(1-p)/\lambda_0\right]^{1/\alpha}
+}
+=
+\left(\frac{\lambda_0}{\lambda_1}\right)^{1/\alpha}.
+$$
+Therefore, for the GLL distribution, the marginal hazard ratio is generally time-dependent. The marginal survival odds ratio is also time-dependent, except when $\theta=1$, which corresponds to the log-logistic distribution. In that special case, the survival odds ratio is time-invariant. 
+
+In contrast, when the two treatment groups have the same heterogeneity parameter $\theta$ and the same shape parameter $\alpha$, their quantile ratio is time-invariant for all $\theta \geq 0.$
+
+Thus, the quantile ratio does not depend on the magnitude of the shared
+population heterogeneity parameter $\theta$. It can therefore provide a
+treatment-effect measure that is invariant to the level of population
+heterogeneity, provided that the assumption of a common $\theta$ and $\alpha$
+is appropriate.
+
+Under the GLL model, a median survival time can be estimated parametrically
+even when fewer than 50\% of patients have experienced the event. However,
+this estimate depends on the validity of the GLL model. In contrast, a
+nonparametric estimate of the median requires the estimated survival curve to
+fall to or below $0.50$, which generally requires that at least 50\% of
+patients experience the event.
+
+
+## References
