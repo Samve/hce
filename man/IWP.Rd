@@ -9,26 +9,51 @@ IWP(data, AVAL, TRTP, ref)
 \arguments{
 \item{data}{a data frame containing subject-level data.}
 
-\item{AVAL}{variable in the data with ordinal analysis values.}
+\item{AVAL}{a character string specifying the variable containing the ordinal analysis values.}
 
-\item{TRTP}{the treatment variable in the data.}
+\item{TRTP}{a character string specifying the treatment variable.}
 
-\item{ref}{the reference treatment group.}
+\item{ref}{the reference treatment value.}
 }
 \value{
-the input data frame with a new column of individual win proportions named using the input \code{AVAL} value with \verb{_}.
+the input data frame with rows in their original order and a new column of individual win proportions.
+The new column is named using the input \code{AVAL} value followed by \verb{_}, and two additional columns, \code{AVAL} and \code{TRTP}, containing
+the corresponding analysis values and treatment-group assignments. The
+\code{AVAL} and \code{TRTP} columns facilitate conversion to an \code{hce} object using
+\code{\link[=as_hce]{as_hce()}}.
 }
 \description{
 Calculates patient-level individual win proportions
 }
 \examples{
-KHCE1 <- IWP(data = KHCE, AVAL = "EGFRBL", TRTP = "TRTPN", ref = 2)
-WP <- tapply(KHCE1$EGFRBL_, KHCE1$TRTPN, mean)
-VAR <- tapply(KHCE1$EGFRBL_, KHCE1$TRTPN, function(x) (length(x)-1)*var(x)/length(x))
-N <- tapply(KHCE1$EGFRBL_, KHCE1$TRTPN, length)
-SE <- sqrt(sum(VAR/N))
+# Example 1
+## Derive individual win proportions using baseline eGFR
+dat <- KHCE[, c("TRTPN", "EGFRBL")]
+dat1 <- IWP(
+  data = dat,
+  AVAL = "EGFRBL",
+  TRTP = "TRTPN",
+  ref = 2
+)
+
+## Calculate the win proportion and its standard error
+WP <- tapply(dat1$EGFRBL_, dat1$TRTPN, mean)
+VAR <- tapply(
+  dat1$EGFRBL_,
+  dat1$TRTPN,
+  function(x) (length(x) - 1) * var(x) / length(x)
+)
+N <- tapply(dat1$EGFRBL_, dat1$TRTPN, length)
+SE <- sqrt(sum(VAR / N))
+
+## Compare the results with the calcWO() implementation
+options(digits = 10)
 c(WP = WP[[1]], SE = SE)
-calcWO(EGFRBL ~ TRTP, data = KHCE)[c("WP", "SE_WP")]
+calcWO(EGFRBL ~ TRTPN, data = dat, ref = 2)[c("WP", "SE_WP")]
+
+## The output includes standardized AVAL and TRTP columns, allowing it to
+## be converted directly to an hce object using as_hce().
+calcWO(as_hce(dat1))
 }
 \references{
 Gasparyan SB et al. "Adjusted win ratio with stratification: calculation methods and interpretation." Statistical Methods in Medical Research 30.2 (2021): 580-611. \url{doi:10.1177/0962280220942558}.

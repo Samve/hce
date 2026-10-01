@@ -1599,6 +1599,18 @@ border-radius: 0px;
 </div>
 
 
+<style>
+a[role="doc-biblioref"] {
+color: green !important;
+}
+a[role="doc-biblioref"]:visited {
+color: green !important;
+}
+a[role="doc-biblioref"]:hover {
+color: lightgreen !important;
+text-decoration: underline;
+}
+</style>
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
 <div id="setup" class="section level3">
@@ -1607,8 +1619,8 @@ border-radius: 0px;
 <p>Load the package <code>hce</code> and check the version:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(hce)</span>
 <span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">packageVersion</span>(<span class="st">&quot;hce&quot;</span>)</span>
-<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="co">#&gt; [1] &#39;0.9.4&#39;</span></span></code></pre></div>
-<p>For citing the package run <code>citation(&quot;hce&quot;)</code> <span class="citation">(Gasparyan 2026)</span>.</p>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="co">#&gt; [1] &#39;0.9.4.5&#39;</span></span></code></pre></div>
+<p>For citing the package run <code>citation(&quot;hce&quot;)</code> <span class="citation">(<a href="#ref-hce">Gasparyan 2026</a>)</span>.</p>
 </div>
 <div id="definitions" class="section level3">
 <h3>Definitions</h3>
@@ -1618,14 +1630,13 @@ preserving the distinct nature of each outcome. In a particular case,
 outcomes within a fixed follow-up period are ranked by clinical
 importance, and the patient’s most important outcome is used for
 analysis. HCEs are typically analyzed using win odds and related win
-statistics <span class="citation">(Gasparyan et al. 2023)</span>.</p>
+statistics <span class="citation">(<a href="#ref-gasparyanhierarchical">Gasparyan et al. 2023</a>)</span>.</p>
 <p>A straightforward example of an HCE is an endpoint defined on an
 ordinal scale assessed at a specific timepoint. For instance, the
 COVID-19 HCE uses an 8-category ordinal scale to evaluate physical
 limitations in hospitalized patients with COVID-19 at 15 or 30 days
 post-treatment. See the <code>COVID-19</code> and <code>COVID-19b</code>
-dataset ordinal outcomes as examples <span class="citation">(Beigel et
-al. 2020)</span>.</p>
+dataset ordinal outcomes as examples <span class="citation">(<a href="#ref-beigel2020remdesivir">Beigel et al. 2020</a>)</span>.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">table</span>(COVID19)</span>
 <span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="co">#&gt;          GROUP</span></span>
 <span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="co">#&gt; TRTP        1   2   3   4   5   6   7   8</span></span>
@@ -1669,7 +1680,8 @@ wins, losses, and ties.</p>
 hierarchical composite endpoints. Below are two approaches with their
 implementations.</p>
 <ol style="list-style-type: decimal">
-<li>The most-important outcome approach</li>
+<li>The most-important outcome approach <span class="citation">(<a href="#ref-gasparyan2026univariate">Gasparyan, Koch, and Brunner
+2026</a>)</span></li>
 </ol>
 <p>Select a single outcome per patient—the highest-priority one. If a
 patient experienced death, select death (regardless of hospitalization).
@@ -1686,8 +1698,7 @@ III. No outcome.</p>
 <span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a><span class="co">#&gt; 1    A 3900 1047 5053 10000 3.7249284 1.798377</span></span>
 <span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a><span class="co">#&gt; 2    P 1047 3900 5053 10000 0.2684615 0.556057</span></span></code></pre></div>
 <ol start="2" style="list-style-type: decimal">
-<li>The move-down approach (see <span class="citation">Pocock et al.
-(2012)</span>)</li>
+<li>The move-down approach <span class="citation">(<a href="#ref-poc2012">Pocock et al. 2012</a>)</span></li>
 </ol>
 <p>Compare patients first on death. The active (control) patient wins if
 they are alive while the patient in the control (active) group died. If
@@ -1738,13 +1749,12 @@ first, then hospitalization), reducing indeterminate pairings.</p>
 <h2>Examples</h2>
 <p>Here we provide examples of HCE using in clinical trials from
 different therapeutic areas. General considerations for creating HCEs
-can be found in <span class="citation">Gasparyan et al. (2022)</span>,
-<span class="citation">Little et al. (2023)</span>.</p>
+can be found in <span class="citation">Gasparyan et al. (<a href="#ref-gasparyan2022design">2022</a>)</span>, <span class="citation">Little et al. (<a href="#ref-khce1">2023</a>)</span>.</p>
 <div id="kidney-hce" class="section level3">
 <h3>Kidney HCE</h3>
-<p>The kidney HCE defined in <span class="citation">Heerspink et al.
-(2023)</span> has the following ordinal outcomes (for the review of the
-topic see <span class="citation">Little et al. (2023)</span>).</p>
+<p>The kidney HCE defined in <span class="citation">Heerspink et al. (<a href="#ref-khce2">2023</a>)</span> has the following ordinal outcomes
+(for the review of the topic see <span class="citation">Little et al.
+(<a href="#ref-khce1">2023</a>)</span>).</p>
 <pre><code>#&gt;   Order                                      Category
 #&gt; 1     I                                         Death
 #&gt; 2    II            Dialysis or kidney transplantation
@@ -1774,19 +1784,18 @@ outcomes</p>
 baseline characteristics, <code>ADLB</code> laboratory measurements of
 kidney function, and <code>ADET</code> for the time-to-event outcomes
 with their timing. For the detailed derivation see the <a href="https://cdn-links.lww.com/permalink/jsn/e/jsn_2023_09_29_heerspink_1_sdc1.pdf">Technical
-Appendix</a> in <span class="citation">Heerspink et al.
-(2023)</span>.</p>
+Appendix</a> in <span class="citation">Heerspink et al. (<a href="#ref-khce2">2023</a>)</span>.</p>
 </div>
 <div id="covid-19" class="section level3">
 <h3>COVID-19</h3>
-<p>The DARE-19 <span class="citation">(M. Kosiborod et al. 2021; M. N.
-Kosiborod et al. 2021)</span> trial used an HCE to assess outcomes in
-patients hospitalized for COVID-19 and treated for 30 days. The COVID-19
-HCE is presented below. It combines death, in hospital organ dysfunction
-events with clinical status at Day 30 for patients alive, still
-hospitalized but without previous organ dysfunction events, and hospital
-discharge as the most favorable outcome for patients discharging without
-organ dysfunction events and being alive at Day 30.</p>
+<p>The DARE-19 <span class="citation">(<a href="#ref-kosiborod2021effects">M. Kosiborod et al. 2021</a>; <a href="#ref-kosiborod2021dapagliflozin">M. N. Kosiborod et al.
+2021</a>)</span> trial used an HCE to assess outcomes in patients
+hospitalized for COVID-19 and treated for 30 days. The COVID-19 HCE is
+presented below. It combines death, in hospital organ dysfunction events
+with clinical status at Day 30 for patients alive, still hospitalized
+but without previous organ dysfunction events, and hospital discharge as
+the most favorable outcome for patients discharging without organ
+dysfunction events and being alive at Day 30.</p>
 <p>Below a higher category signifies a better outcome. Patients are
 ranked into one and only one category based on their clinically most
 severe event. For example, patients experiencing an in-hospital new or
@@ -1818,7 +1827,8 @@ outcome than the late event (reverse of the ranking in categories
 <div id="heart-failure" class="section level3">
 <h3>Heart Failure</h3>
 <p>In the Heart Failure population (see <span class="citation">Kondo et
-al. (2023)</span>) the following HCE was considered</p>
+al. (<a href="#ref-kondo2023use">2023</a>)</span>) the following HCE was
+considered</p>
 <pre><code>#&gt;   Order                                        Category
 #&gt; 1     I                            Cardiovascular death
 #&gt; 2    II Total (first and recurrent) HF hospitalizations
@@ -1956,7 +1966,7 @@ describe the conditional distribution of outcomes.</p></li>
 </ol>
 <div id="joint-distribution-modeling-using-copulas" class="section level4">
 <h4>Joint Distribution Modeling Using Copulas</h4>
-<p>Sklar’s theorem <span class="citation">(Sklar 1959)</span> shows that
+<p>Sklar’s theorem <span class="citation">(<a href="#ref-sklar1959fonctions">Sklar 1959</a>)</span> shows that
 multivariate distribution functions can be expressed using a copula and
 univariate distributions. For a random vector <span class="math inline">\(X^d=(X_1,\cdots,X_d)\)</span> with a multivariate
 distribution function <span class="math inline">\(H(x_1,\cdots,x_d),\)</span> Sklar’s theorem states
@@ -1983,8 +1993,8 @@ simulated a uniform random vector <span class="math inline">\(U^d=(U_1,\cdots, U
 <span class="math display">\[(X_1,\cdots,X_d)=(F_1^{-1}(U_1),\cdots,F_d^{-1}
 (U_d)).\]</span> The main challenge remains in simulating from the given
 copula.</p>
-<p>An <em>Archimedean copula</em> <span class="citation">(Nelsen
-2006)</span> is one where:</p>
+<p>An <em>Archimedean copula</em> <span class="citation">(<a href="#ref-nelsen2006introduction">Nelsen 2006</a>)</span> is one
+where:</p>
 <p><span class="math display">\[C(u^d;\varphi)=\varphi(\varphi^{-1}(u_1)+\cdots+\varphi^{-1}(u_d)).\]</span>
 The function <span class="math inline">\(\varphi:[0,+\infty]\rightarrow
 [0,1]\)</span> is a generator - continuous, decreasing, with <span class="math inline">\(\varphi(0)=1\)</span> and <span class="math inline">\(\lim_{t\rightarrow+\infty}\varphi(t)=0.\)</span>
@@ -1996,8 +2006,8 @@ copula.</p>
 <p>By Bernstein’s theorem, completely monotone Archimedean generators
 coincide with Laplace-Stieltjes transforms of distribution functions
 <span class="math inline">\(F,\)</span> determined by <span class="math inline">\(\varphi=LS[F].\)</span> The
-<strong>Marshall-Olkin</strong> algorithm <span class="citation">(Marshall and Olkin 1988)</span> for sampling from an
-Archimedean copula involves:</p>
+<strong>Marshall-Olkin</strong> algorithm <span class="citation">(<a href="#ref-marshall1988families">Marshall and Olkin 1988</a>)</span> for
+sampling from an Archimedean copula involves:</p>
 <ol style="list-style-type: decimal">
 <li>Sampling <span class="math inline">\(V\sim
 F=LS^{-1}[\varphi].\)</span></li>
@@ -2008,17 +2018,17 @@ Exp(1),\,j\in\{1,\cdots,d\}.\)</span></li>
 <p>The vector <span class="math inline">\(U=(U_1,\cdots, U_d)\)</span>
 is then a random vector from the Archimedean copula with generator <span class="math inline">\(\varphi\)</span>. For the Gumbel copula, one needs
 to use the inverse Laplace-Stieltjes transform of a stable distribution
-<span class="citation">(Nolan 2020; Hofert and Mächler 2011)</span>:
-<span class="math display">\[F\sim S(1/\theta, 1,
+<span class="citation">(<a href="#ref-nolan2020univariate">Nolan
+2020</a>; <a href="#ref-hofert2011nested">Hofert and Mächler
+2011</a>)</span>: <span class="math display">\[F\sim S(1/\theta, 1,
 \cos^\theta(\pi/(2\theta)), {\mathbf I}_{\{\theta=1\}},1)\]</span>
 modifying the first step to sample from a stable distribution.</p>
 </div>
 <div id="chambers-mallows-stuck-method-for-simulating-stable-random-variables" class="section level5">
 <h5>Chambers-Mallows-Stuck method for simulating stable random
 variables</h5>
-<p>Chambers-Mallows-Stuck method <span class="citation">(Chambers,
-Mallows, and Stuck 1976)</span> efficiently simulates stable variables
-with:</p>
+<p>Chambers-Mallows-Stuck method <span class="citation">(<a href="#ref-chambers1976method">Chambers, Mallows, and Stuck
+1976</a>)</span> efficiently simulates stable variables with:</p>
 <ol style="list-style-type: decimal">
 <li><p>Generating independent uniform and exponential random variables
 <span class="math display">\[\Theta\sim
@@ -2041,8 +2051,8 @@ one needs to set <span class="math inline">\(\beta=1\)</span>).</p></li>
 <h5>Note</h5>
 <p>In the original Chambers-Mallows-Stuck formula, the term <span class="math display">\[\frac{1}{[\cos(\alpha\theta_0)\cos(\Theta)]^\frac{1}{\alpha}}\]</span>
 is replaced by <span class="math inline">\(\frac{C_{\tan}}{[\cos(\Theta)]^\frac{1}{\alpha}},\)</span>
-as suggested by the <code>copula</code> package <span class="citation">(Hofert et al. 2025)</span>, which is based on the fact
-that <span class="math inline">\(C_{\tan} =
+as suggested by the <code>copula</code> package <span class="citation">(<a href="#ref-hofert2025copula">Hofert et al.
+2025</a>)</span>, which is based on the fact that <span class="math inline">\(C_{\tan} =
 1/(\cos(\alpha\theta_0))^{1/\alpha}.\)</span> Indeed, one needs to show
 that</p>
 <p><span class="math display">\[(1+b_{\tan}^2)^\frac{1}{2\alpha}=1/(\cos(\alpha\theta_0))^{1/\alpha},\]</span>
@@ -2109,6 +2119,12 @@ Berwanger, and Mikhail N Kosiborod. 2022. <span>“Design and Analysis of
 Studies Based on Hierarchical Composite Endpoints: Insights from the
 DARE-19 Trial.”</span> <em>Therapeutic Innovation &amp; Regulatory
 Science</em> 56 (5): 785–94. <a href="https://doi.org/10.1007/s43441-022-00420-1">https://doi.org/10.1007/s43441-022-00420-1</a>.
+</div>
+<div id="ref-gasparyan2026univariate" class="csl-entry">
+Gasparyan, Samvel B, Gary G Koch, and Edgar Brunner. 2026. <span>“The
+Univariate Distribution of Hierarchical Composite Endpoints and the
+Condorcet Non-Transitivity Paradox.”</span> <em>Biometrical Journal</em>
+68 (3): e70140. <a href="https://doi.org/10.1002/bimj.70140">https://doi.org/10.1002/bimj.70140</a>.
 </div>
 <div id="ref-gasparyanhierarchical" class="csl-entry">
 Gasparyan, Samvel B, Elaine K Kowalewski, Joan Buenconsejo, and Gary G

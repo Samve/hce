@@ -1,3 +1,24 @@
+
+# hce 0.9.5
+
+### Bugs
+
+
+### Updates
+
+* The function `IWP()` has been updated to return the output data frame with rows in their original order. 
+
+* The `GLL` family is updated to include the `lower.tail` argument and `log.p` argument for the `pGLL()` and `qGLL()` functions, consistent with other distribution functions in R.
+
+### New
+
+* New function `oGLL()` in the `GLL` family of distributions, which computes the survival odds of the generalized log-logistic distribution. 
+
+### Documentation
+
+* New vignette on Generalized Log-Logistic distributions (`GLL`). 
+
+
 # hce 0.9.4
 
 ### Updates

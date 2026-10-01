@@ -3,6 +3,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+R <- function() knitr::include_graphics("Rlogo.png", dpi = 5000)
 
 ## ----echo=FALSE, out.width = '33%'--------------------------------------------
 knitr::include_graphics("hex-hce.png")

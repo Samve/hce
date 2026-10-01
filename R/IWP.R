@@ -1,24 +1,52 @@
 #' Calculates patient-level individual win proportions
 #'
 #' @param data a data frame containing subject-level data.
-#' @param AVAL variable in the data with ordinal analysis values.
-#' @param TRTP the treatment variable in the data.
-#' @param ref the reference treatment group.
-#' @return the input data frame with a new column of individual win proportions named using the input `AVAL` value with `_`.   
+#' @param AVAL a character string specifying the variable containing the ordinal analysis values.
+#' @param TRTP a character string specifying the treatment variable.
+#' @param ref the reference treatment value.
+#' @return the input data frame with rows in their original order and a new column of individual win proportions.
+#'  The new column is named using the input `AVAL` value followed by `_`, and two additional columns, `AVAL` and `TRTP`, containing
+#' the corresponding analysis values and treatment-group assignments. The
+#' `AVAL` and `TRTP` columns facilitate conversion to an `hce` object using
+#' [hce::as_hce()].   
 #' @export
 #' @md
 #' @seealso [hce::calcWO()], [hce::calcWO.hce()], [hce::calcWO.formula()].
 #' @references Gasparyan SB et al. "Adjusted win ratio with stratification: calculation methods and interpretation." Statistical Methods in Medical Research 30.2 (2021): 580-611. <doi:10.1177/0962280220942558>.
 #' @examples
-#' KHCE1 <- IWP(data = KHCE, AVAL = "EGFRBL", TRTP = "TRTPN", ref = 2)
-#' WP <- tapply(KHCE1$EGFRBL_, KHCE1$TRTPN, mean)
-#' VAR <- tapply(KHCE1$EGFRBL_, KHCE1$TRTPN, function(x) (length(x)-1)*var(x)/length(x))
-#' N <- tapply(KHCE1$EGFRBL_, KHCE1$TRTPN, length)
-#' SE <- sqrt(sum(VAR/N))
+#' # Example 1
+#' ## Derive individual win proportions using baseline eGFR
+#' dat <- KHCE[, c("TRTPN", "EGFRBL")]
+#' dat1 <- IWP(
+#'   data = dat,
+#'   AVAL = "EGFRBL",
+#'   TRTP = "TRTPN",
+#'   ref = 2
+#' )
+#'
+#' ## Calculate the win proportion and its standard error
+#' WP <- tapply(dat1$EGFRBL_, dat1$TRTPN, mean)
+#' VAR <- tapply(
+#'   dat1$EGFRBL_,
+#'   dat1$TRTPN,
+#'   function(x) (length(x) - 1) * var(x) / length(x)
+#' )
+#' N <- tapply(dat1$EGFRBL_, dat1$TRTPN, length)
+#' SE <- sqrt(sum(VAR / N))
+#'
+#' ## Compare the results with the calcWO() implementation
+#' options(digits = 10)
 #' c(WP = WP[[1]], SE = SE)
-#' calcWO(EGFRBL ~ TRTP, data = KHCE)[c("WP", "SE_WP")]
+#' calcWO(EGFRBL ~ TRTPN, data = dat, ref = 2)[c("WP", "SE_WP")]
+#'
+#' ## The output includes standardized AVAL and TRTP columns, allowing it to
+#' ## be converted directly to an hce object using as_hce().
+#' calcWO(as_hce(dat1))
 IWP <- function(data, AVAL, TRTP, ref){
   data <- as.data.frame(data)
+  ############# Keep the order of the original data for the output
+  data$.IWP_input_order <- seq_len(nrow(data))
+  ###############################
   AVAL <- AVAL[1]
   ref <- ref[1]
   TRTP <- TRTP[1]
@@ -46,7 +74,10 @@ IWP <- function(data, AVAL, TRTP, ref){
   d$R0 <- base::ifelse(d$TRTP == "A", d$R/n0, d$R/n1)
   data <- rbind(data[data$TRTP == "A", ], data[data$TRTP == "P", ])
   data[ , paste0(AVAL, "_")] <- d$R0
-  data[order(as.numeric(row.names(data))),]
+  ### reorder to keep the original order
+  data <- data[order(data$.IWP_input_order), , drop = FALSE]
+  data$.IWP_input_order <- NULL
+  data
 }
 
 

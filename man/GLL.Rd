@@ -8,43 +8,58 @@
 \alias{rGLL}
 \alias{hGLL}
 \alias{HGLL}
+\alias{oGLL}
 \title{The Generalized Log-Logistic Distribution}
 \usage{
 dGLL(x, rate, shape = 1, theta = 0, log = FALSE)
 
-pGLL(q, rate, shape = 1, theta = 0)
+pGLL(q, rate, shape = 1, theta = 0, lower.tail = TRUE, log.p = FALSE)
 
-qGLL(p, rate, shape = 1, theta = 0)
+qGLL(p, rate, shape = 1, theta = 0, lower.tail = TRUE, log.p = FALSE)
 
 rGLL(n, rate, shape = 1, theta = 0)
 
 hGLL(x, rate, shape = 1, theta = 0)
 
 HGLL(x, rate, shape = 1, theta = 0)
+
+oGLL(x, rate, shape = 1, theta = 0, lower.tail = FALSE)
 }
 \arguments{
-\item{x, q}{vector of quantiles.}
+\item{x, q}{non-negative values at which to evaluate the density,
+distribution, hazard, cumulative hazard, or survival odds.}
 
 \item{rate}{positive rate parameter of the distribution.}
 
 \item{shape}{positive shape parameter of the distribution.}
 
-\item{theta}{non-negative additional parameter of the distribution, with default
-value \code{0}.}
+\item{theta}{non-negative additional parameter of the distribution, with
+default value \code{0}.}
 
-\item{log}{logical; if \code{TRUE}, densities are given as logarithms.}
+\item{log}{logical; if \code{TRUE}, the density is returned on the log scale.}
 
-\item{p}{vector of probabilities.}
+\item{lower.tail}{logical; if \code{TRUE} (default), probabilities are
+\eqn{P[X \leq x]}; otherwise, they are \eqn{P[X > x]}.}
+
+\item{log.p}{logical; if \code{TRUE}, probabilities are supplied or returned
+on the log scale.}
+
+\item{p}{probabilities in \eqn{[0, 1]}. When \code{log.p = TRUE}, \code{p} contains
+log-probabilities in \eqn{[-\infty, 0]}.}
 
 \item{n}{number of observations. Must be a single non-negative integer.}
 }
 \value{
-For \code{dGLL()}, \code{pGLL()}, \code{qGLL()}, \code{hGLL()}, and \code{HGLL()}, a numeric vector of
-the same length as the main input (\code{x}, \code{q}, or \code{p}). For \code{rGLL()}, a numeric
-vector of length \code{n}.
+For \code{dGLL()}, \code{pGLL()}, \code{qGLL()}, \code{hGLL()}, \code{HGLL()}, and \code{oGLL()}, a numeric
+vector with the same length as the main input (\code{x}, \code{q}, or \code{p}). For
+\code{rGLL()}, a numeric vector of length \code{n}. Scalar values of \code{rate}, \code{shape},
+and \code{theta} are recycled to match the length of the main input. Non-scalar
+parameter vectors must have the same length as the main input. When
+vector-valued parameters are supplied, each output element is calculated
+using the corresponding parameter values.
 }
 \description{
-Density, distribution function, quantile function, hazard, cumulative hazard,
+Density, distribution function, quantile function, hazard, cumulative hazard, survival odds,
 and random generation for the generalized log-logistic distribution.
 }
 \details{
@@ -63,14 +78,28 @@ F(t \mid \lambda, \alpha, \theta) =
 1 - \left(1 + \theta \lambda t^\alpha\right)^{-1 / \theta}.
 }
 
-The quantile function is
+For \eqn{\theta > 0}, the quantile function for a lower-tail
+probability \eqn{p = F(t)} is
 \deqn{
 Q(p \mid \lambda, \alpha, \theta) =
 \left(
 \frac{(1 - p)^{-\theta} - 1}{\theta \lambda}
 \right)^{1 / \alpha},
-\qquad 0 \le p \le 1,\ \theta > 0.
+\qquad 0 \leq p \leq 1.
 }
+
+When \code{lower.tail = FALSE}, \code{p} is an upper-tail probability
+\eqn{p = S(t)}, and the quantile is
+\deqn{
+Q(p \mid \lambda, \alpha, \theta) =
+\left(
+\frac{p^{-\theta} - 1}{\theta \lambda}
+\right)^{1 / \alpha},
+\qquad 0 \leq p \leq 1.
+}
+
+When \code{log.p = TRUE}, \code{p} is the logarithm of the selected
+lower- or upper-tail probability.
 
 The cumulative hazard function is
 \deqn{
@@ -112,15 +141,28 @@ function
 \deqn{
 S(t \mid \lambda, \alpha) = \exp\left(-\lambda t^\alpha\right).
 }
-The corresponding quantile function is
+The lower-tail quantile function is
 \deqn{
 Q(p \mid \lambda, \alpha) =
 \left(
 \frac{-\log(1 - p)}{\lambda}
+\right)^{1 / \alpha},
+\qquad 0 \leq p \leq 1.
+}
+
+For an upper-tail probability \eqn{p = S(t)}, the corresponding quantile is
+\deqn{
+Q(p \mid \lambda, \alpha) =
+\left(
+\frac{-\log(p)}{\lambda}
 \right)^{1 / \alpha}.
 }
-In this case, \code{dGLL(..., log = TRUE)} returns the corresponding Weibull
-log-density.
+
+When \code{log.p = TRUE}, \code{p} is the logarithm of the selected lower- or
+upper-tail probability.
+
+In this case, \code{dGLL(..., log = TRUE)} returns the corresponding Weibull log-density.
+
 This corresponds to the Weibull distribution in \code{\link[stats:dweibull]{stats::dweibull()}},
 \code{\link[stats:pweibull]{stats::pweibull()}}, \code{\link[stats:qweibull]{stats::qweibull()}}, and \code{\link[stats:rweibull]{stats::rweibull()}} with
 \code{shape = shape} and \code{scale = rate^(-1 / shape)}.
@@ -130,14 +172,46 @@ When \eqn{\theta = 1}, the survival function becomes
 S(t \mid \lambda, \alpha, 1) = \left(1 + \lambda t^\alpha\right)^{-1},
 }
 corresponding to the log-logistic distribution.
+
+The survival odds are defined as
+\deqn{
+SO(t \mid \lambda, \alpha, \theta)
+= \frac{S(t \mid \lambda, \alpha, \theta)}
+{1 - S(t \mid \lambda, \alpha, \theta)}.
+}
+
+For \eqn{\theta > 0},
+\deqn{
+SO(t \mid \lambda, \alpha, \theta)
+=
+\left[
+\left(1 + \theta \lambda t^\alpha\right)^{1/\theta}
+- 1
+\right]^{-1}.
+}
+
+When \eqn{\theta = 0}, the survival odds are given by the
+Weibull limit
+\deqn{
+SO(t \mid \lambda, \alpha, 0)
+=
+\left[\exp\left(\lambda t^\alpha\right)-1\right]^{-1}.
+}
 }
 \examples{
-## Example 1: Compare the density of GLL with different values of `theta`
-x <- seq(0, 10, length.out = 100)
-y1 <- pGLL(x, rate = 0.5, shape = 2, theta = 1)
-y0 <- pGLL(x, rate = 0.5, shape = 2, theta = 0)
-plot(x, y1, type = "l", ylab = "Cumulative distribution function")
-lines(x, y0, col = "red", lty = 2)
+## Example 1: Compare the CDF of GLL with different values of `theta`
+shape <- 0.85
+rate <- 0.1
+x <- seq(0, 3, length.out = 100)
+y0 <- pGLL(x, rate = rate, shape = shape, theta = 0)
+y1 <- pGLL(x, rate = rate, shape = shape, theta = 1)
+y2 <- pGLL(x, rate = rate, shape = shape, theta = 4)
+plot(x, y0, type = "l", ylab = "Cumulative distribution function", ylim = c(0, .3), 
+main = "Generalized Log-Logistic Distribution CDF")
+lines(x, y1, col = "red", lty = 4, lwd = 2)
+lines(x, y2, col = "blue", lty = 5, lwd = 2)
+legend("topleft", legend = c("theta = 0", "theta = 1", "theta = 4"), 
+col = c("black", "red", "blue"), lty = c(1, 4, 5), lwd = c(1, 2, 2))
 }
 \references{
 Wienke A. \emph{Frailty Models in Survival Analysis}. Chapman and Hall/CRC (2010).

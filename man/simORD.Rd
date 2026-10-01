@@ -45,9 +45,9 @@ d <- simORD(n = 1500, n0 = 1500, M = 5, alpha1 = alpha1, beta1 = beta1,
 alpha0 = alpha0, beta0 = beta0)
 x <- seq(0, 1, 0.01)
 plot(x, dbeta(x, shape1 = alpha1, shape2 = beta1), 
-type = "l", ylab = "Density of beta distribution", col = 2)
-lines(x, dbeta(x, shape1 = alpha0, shape2 = beta0), col = 3, lty = 2)
-legend("topleft", lty = c(1, 2), col = c(2, 3), legend = c("Control", "Active"))
+type = "l", ylab = "Density of beta distribution", col = 3)
+lines(x, dbeta(x, shape1 = alpha0, shape2 = beta0), col = 2, lty = 2)
+legend("topleft", lty = c(2, 1), col = c(2, 3), legend = c("Control", "Active"))
 D <- hce(GROUP = d$GROUPN, TRTP = d$TRTP)
 table(D$TRTP, D$GROUP)
 calcWO(D)

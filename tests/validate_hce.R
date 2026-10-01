@@ -140,15 +140,29 @@ expected <- stratWO(
 stopifnot(isTRUE(all.equal(result, expected)))
 
 ## Order does not affect the IWP calculations
-result <- IWP(data = KHCE, AVAL = "EGFRBL", TRTP = "TRTPN", ref = 2)
-expected <- IWP(
-  data = KHCE[sample(seq_len(nrow(KHCE)), replace = FALSE), ],
+## The two datasets should assign the same ranks to corresponding values,
+## regardless of the input row order. However, when comparing the outputs,
+## each output should retain the row order of its respective input dataset,
+## because IWP() preserves input row order.
+set.seed(123)
+idx <- sample(seq_len(nrow(KHCE)), replace = FALSE)
+
+result <- IWP(
+  data = KHCE,
   AVAL = "EGFRBL",
   TRTP = "TRTPN",
   ref = 2
 )
-stopifnot(isTRUE(all.equal(result, expected)))
 
+expected <- IWP(
+  data = KHCE[idx, ],
+  AVAL = "EGFRBL",
+  TRTP = "TRTPN",
+  ref = 2
+)
+
+expected <- expected[order(idx), , drop = FALSE]
+stopifnot(isTRUE(all.equal(result, expected)))
 ## WP based on the IWP calculation matches the calcWO results
 iwp_result <- IWP(data = KHCE, AVAL = "EGFRBL", TRTP = "TRTPN", ref = 2)
 result <- mean(iwp_result$EGFRBL_[iwp_result$TRTP == "A"])

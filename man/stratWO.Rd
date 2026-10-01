@@ -18,5 +18,5 @@ a list containing the stratified results and results by strata.
 A generic function for stratified win odds with adjustment
 }
 \seealso{
-\code{\link[=stratWO.data.frame]{stratWO.data.frame()}}  methods.
+\code{\link[=stratWO.data.frame]{stratWO.data.frame()}}, \code{\link[=stratWO.formula]{stratWO.formula()}}  methods.
 }
