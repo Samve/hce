@@ -9,8 +9,8 @@
 #' @param TTE_P event rates per year in the placebo group for the time-to-event outcomes. Should have the same length as `TTE_A`.
 #' @param CM_A mean value for the continuous outcome of the active group.
 #' @param CM_P mean value for the continuous outcome of the placebo group.
-#' @param CSD_A standard deviation for the continuous outcome of the active group.
-#' @param CSD_P standard deviation for the continuous outcome of the placebo group.
+#' @param CSD_A standard deviation for the continuous outcome of the active group. When is set to 0, produces constant values equal to the mean. When is set to 0, produces constant values.
+#' @param CSD_P standard deviation for the continuous outcome of the placebo group. By default, it is set to the same value as `CSD_A`. When is set to 0, produces constant values.
 #' @param fixedfy length of follow-up in years.
 #' @param yeardays number of days in a year.
 #' @param pat scale of provided event rates (per `pat`-years).
@@ -37,14 +37,14 @@
 #' @md
 #' @seealso [hce::hce()], [hce::as_hce()] for the helper a coerce function to `hce` objects.
 #' @examples
-#' # Example 1
+#' # Example 1: Five time-to-event outcomes, exponentially distributed
 #' Rates_A <- c(1.72, 1.74, 0.58, 1.5, 1)
 #' Rates_P <- c(2.47, 2.24, 2.9, 4, 6)
 #' dat <- simHCE(n = 2500, TTE_A = Rates_A, TTE_P = Rates_P,
 #'               CM_A = -3, CM_P = -6, CSD_A = 16, CSD_P = 15, fixedfy = 3)
 #' head(dat)
 #' 
-#'# Example 2
+#'# Example 2: A Weibull time-to-event outcome with a continuous outcome on a log scale
 #' Rates_A <- 10
 #' Rates_P <- 15
 #' dat <- simHCE(n = 1000, n0 = 500, TTE_A = Rates_A, TTE_P = Rates_P, 
@@ -60,6 +60,14 @@
 #' CM_A = -3, CM_P = -6, CSD_A = 15, fixedfy = 3, theta = 1.0001, seed = 1)
 #' calcWO(dat1)
 #' calcWO(dat2)
+#' 
+#' # Example 4: Remove the coninuous endpoint by setting `CM_A = CM_P` and `CSD_A = CSD_P = 0`
+#' Rates_P <- c(10, 15, 20)
+#' Rates_A <- Rates_P * 0.8
+#' CONST <- 10 # the value does not matter, as long as it is the same for both groups
+#' dat <- simHCE(n = 1000, n0 = 500, TTE_A = Rates_A, TTE_P = Rates_P, 
+#'               CM_A = CONST, CM_P = CONST, CSD_A = 0, CSD_P = 0, seed = 5)
+#' summaryWO(dat)$summary_by
 
 
 simHCE <- function(n, n0 = n, TTE_A, TTE_P, CM_A, CM_P, CSD_A = 1, CSD_P = CSD_A, fixedfy = 1, yeardays = 360, pat = 100, shape = 1, theta = 1, logC = FALSE, seed = NULL, dec = 2, all_data = FALSE){

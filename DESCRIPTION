@@ -17,7 +17,7 @@ Roxygen: list(markdown = TRUE)
 VignetteBuilder: knitr
 Config/roxygen2/version: 8.1.0
 NeedsCompilation: no
-Packaged: 2026-10-15 17:33:20 UTC; Samve
+Packaged: 2026-11-06 17:35:52 UTC; Samve
 Author: Samvel B. Gasparyan [aut, cre] (ORCID:
     <https://orcid.org/0000-0002-4797-2208>)
 Maintainer: Samvel B. Gasparyan <gasparyan.co@gmail.com>
