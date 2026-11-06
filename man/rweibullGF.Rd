@@ -16,7 +16,7 @@ rweibullGF(n, rate, shape = 1, theta = 1)
 \item{theta}{variance parameter of the gamma frailty distribution, with a default value of 1. Must be a positive vector of length 1 or \code{n}.}
 }
 \value{
-a vector of random numbers of length \code{n}. When \code{shape} and \code{rate} are vectors of length \code{n}, then each element of the output is generated using the corresponding elements of \code{shape}, \code{rate}, and \code{theta}.
+a vector of random numbers of length \code{n}. When vectors of length \code{n} are provided, each element of the output is generated using the corresponding elements of \code{shape}, \code{rate}, and \code{theta}.
 }
 \description{
 Simulate random numbers from a Weibull distribution with gamma frailty
