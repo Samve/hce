@@ -31,22 +31,24 @@
 #' longitudinal laboratory data. When `TTE = FALSE`, only the `GFR` dataset is
 #' returned and no derived event dataset is generated.
 #'
-#' @param n Sample size in the active-treatment group.
-#' @param Delta Overall treatment effect on annual eGFR decline. Half of this
+#' @param n sample size in the active-treatment group.
+#' @param Delta overall treatment effect on annual eGFR decline. Half of this
 #'   effect is implemented additively and half proportionally.
-#' @param annual_decline Annual eGFR decline in the control group.
-#' @param n0 Sample size in the control group. Defaults to `n`.
+#' @param annual_decline annual eGFR decline in the control group.
+#' @param n0 sample size in the control group. Defaults to `n`.
 #' @param duration_years Duration of follow-up in years.
-#' @param Emin Lower bound for the simulated baseline eGFR.
-#' @param Emax Upper bound for the simulated baseline eGFR.
-#' @param m Number of equally spaced follow-up intervals. The simulation
+#' @param Emin lower bound for the simulated baseline eGFR.
+#' @param Emax upper bound for the simulated baseline eGFR.
+#' @param m number of equally spaced follow-up intervals. The simulation
 #'   includes `m + 1` visits, including baseline.
 #' @param bias Additive measurement bias applied to postbaseline active-treatment
 #'   measurements only.
-#' @param Sigma Between-patient standard deviation for the annual eGFR slope.
-#' @param sigma Within-patient measurement-error standard deviation. If `NULL`,
+#' @param Bias  fractional multiplicative bias bias applied to postbaseline active-treatment
+#'   measurements only.
+#' @param Sigma between-patient standard deviation for the annual eGFR slope.
+#' @param sigma within-patient measurement-error standard deviation. If `NULL`,
 #'   it is estimated from the predicted eGFR at each visit.
-#' @param TTE Logical flag indicating whether to derive time-to-event outcomes.
+#' @param TTE logical flag indicating whether to derive time-to-event outcomes.
 #'   If `TRUE`, the returned list contains both `GFR` and `ADET`. If `FALSE`,
 #'   only `GFR` is returned.
 #'
@@ -103,7 +105,8 @@
 #'   Delta = 0.75,
 #'   annual_decline = -4,
 #'   duration_years = 2,
-#'   bias = 1,
+#'   bias = 0.5,
+#'   Bias = 0.01,
 #'   Sigma = 4,
 #'   Emin = 25,
 #'   Emax = 75,
@@ -252,6 +255,7 @@ simGFR <- function(
     Emax = 100,
     m = 10,
     bias = 0,
+    Bias = 0,
     Sigma = 3,
     sigma = NULL,
     TTE = FALSE
@@ -278,6 +282,7 @@ simGFR <- function(
   m <- round(m)[1]
   theta <- theta[1]
   bias <- bias[1]
+  Bias <- Bias[1]
   TTE <- as.logical(TTE[1])
   # Split the overall treatment effect equally between additive and
   # proportional components.
@@ -295,8 +300,10 @@ simGFR <- function(
       m >= 1,
     "`duration_years` must be positive" =
       fixedfy > 0,
-    "The bias should be numeric" =
-      is.numeric(bias)
+    "The `bias` should be numeric" =
+      is.numeric(bias),
+    "The proportional `Bias` should be numeric" =
+      is.numeric(Bias)
   )
   
   if (!is.null(sigma)) {
@@ -357,22 +364,16 @@ simGFR <- function(
     sigma <- sqrt(VAR)
   }
   
-  # Generate observed baseline and follow-up eGFR values by combining the
-  # latent trajectory with within-patient measurement error.
+  # Generate observed baseline 
   BASE <- d1$BASE0 + stats::rnorm(nrow(d1), sd = sigma)
-  
-  d1$AVAL <- d1$SLOPE * d1$ADAY +
-    ifelse(
-      BASE <= Emin,
-      Emin,
-      ifelse(BASE >= Emax, Emax, BASE)
-    )
-  
-  # Apply additive measurement bias only to postbaseline active-arm
+  # Apply additive and proportional measurement biases only to postbaseline active-arm
   # measurements. Baseline measurements and control-arm measurements are
   # unchanged.
-  d1$AVAL <- d1$AVAL +
-    bias * (d1$TRTPN == 1 & d1$ADAY > 0)
+  idx <- d1$TRTPN == 1 & d1$ADAY > 0 
+  d1$AVAL <- d1$SLOPE * d1$ADAY + ifelse(BASE <= Emin, Emin, 
+                                         ifelse(BASE >= Emax, Emax, BASE))
+  
+  d1$AVAL[idx] <- (1 + Bias)*d1$AVAL[idx] + bias
   
   # Prevent observed eGFR from being negative.
   d1$AVAL[d1$AVAL < 0] <- 0

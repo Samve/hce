@@ -14,39 +14,43 @@ simGFR(
   Emax = 100,
   m = 10,
   bias = 0,
+  Bias = 0,
   Sigma = 3,
   sigma = NULL,
   TTE = FALSE
 )
 }
 \arguments{
-\item{n}{Sample size in the active-treatment group.}
+\item{n}{sample size in the active-treatment group.}
 
-\item{Delta}{Overall treatment effect on annual eGFR decline. Half of this
+\item{Delta}{overall treatment effect on annual eGFR decline. Half of this
 effect is implemented additively and half proportionally.}
 
-\item{annual_decline}{Annual eGFR decline in the control group.}
+\item{annual_decline}{annual eGFR decline in the control group.}
 
-\item{n0}{Sample size in the control group. Defaults to \code{n}.}
+\item{n0}{sample size in the control group. Defaults to \code{n}.}
 
 \item{duration_years}{Duration of follow-up in years.}
 
-\item{Emin}{Lower bound for the simulated baseline eGFR.}
+\item{Emin}{lower bound for the simulated baseline eGFR.}
 
-\item{Emax}{Upper bound for the simulated baseline eGFR.}
+\item{Emax}{upper bound for the simulated baseline eGFR.}
 
-\item{m}{Number of equally spaced follow-up intervals. The simulation
+\item{m}{number of equally spaced follow-up intervals. The simulation
 includes \code{m + 1} visits, including baseline.}
 
 \item{bias}{Additive measurement bias applied to postbaseline active-treatment
 measurements only.}
 
-\item{Sigma}{Between-patient standard deviation for the annual eGFR slope.}
+\item{Bias}{fractional multiplicative bias bias applied to postbaseline active-treatment
+measurements only.}
 
-\item{sigma}{Within-patient measurement-error standard deviation. If \code{NULL},
+\item{Sigma}{between-patient standard deviation for the annual eGFR slope.}
+
+\item{sigma}{within-patient measurement-error standard deviation. If \code{NULL},
 it is estimated from the predicted eGFR at each visit.}
 
-\item{TTE}{Logical flag indicating whether to derive time-to-event outcomes.
+\item{TTE}{logical flag indicating whether to derive time-to-event outcomes.
 If \code{TRUE}, the returned list contains both \code{GFR} and \code{ADET}. If \code{FALSE},
 only \code{GFR} is returned.}
 }
@@ -136,7 +140,8 @@ result <- simGFR(
   Delta = 0.75,
   annual_decline = -4,
   duration_years = 2,
-  bias = 1,
+  bias = 0.5,
+  Bias = 0.01,
   Sigma = 4,
   Emin = 25,
   Emax = 75,
