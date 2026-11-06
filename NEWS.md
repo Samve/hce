@@ -14,6 +14,11 @@
 
 * New function `oGLL()` in the `GLL` family of distributions, which computes the survival odds of the generalized log-logistic distribution. 
 
+* New function `simGFR()` to simulates longitudinal estimated glomerular filtration rate (eGFR) data. Simplified version of the `simKHCE()` function, which is designed to simulate eGFR data without the complexity of hierarchical composite endpoints.
+
+* New function `rlomaxET` to simulate random numbers from a Lomax distribution with with exponential truncation.
+
+
 ### Documentation
 
 * New vignette on Generalized Log-Logistic distributions (`GLL`). 

@@ -37,7 +37,7 @@
 #' S(t \mid \lambda, \alpha, 1) = \left(1 + \lambda t^\alpha\right)^{-1},
 #' }
 #' which is the survival function of a log-logistic distribution.
-#' @return a vector of random numbers of length `n`. When `shape` and `rate` are vectors of length `n`, then each element of the output is generated using the corresponding elements of `shape`, `rate`, and `theta`. 
+#' @return a vector of random numbers of length `n`. When vectors of length `n` are provided, each element of the output is generated using the corresponding elements of `shape`, `rate`, and `theta`. 
 #' @export
 #' @md
 #' @references Wienke A. "Frailty Models in Survival Analysis." Chapman and Hall/CRC (2010).
